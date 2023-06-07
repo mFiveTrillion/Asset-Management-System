@@ -1,0 +1,5 @@
+Name,Type,Purchase Date,Purchase Price,Shares,Symbole,Market Value
+audi,car,31231,400000.00,1200000.00
+AIRNZ,Stock,23/08/2004,2479.00,2990.00
+Hollywood Apartment,RealEstate,23/04/22,2300000.00,3400000.00
+YETI,Stock,23/04/2015,900000.00,1200000.00
