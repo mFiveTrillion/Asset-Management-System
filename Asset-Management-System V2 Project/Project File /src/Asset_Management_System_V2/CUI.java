@@ -19,7 +19,7 @@ public class CUI {
      
         PortfolioMetricsCalc metrics = new PortfolioMetricsCalc(portfolio);
         Portfolio importedPortfolio = new Portfolio();
-         AssetsFileUpdatingTool up1 = new AssetsFileUpdatingTool();
+         ImportAssetListFromCSVFile up1 = new ImportAssetListFromCSVFile();
         
         Scanner scan = new Scanner(System.in);
         int input = 0;
@@ -79,11 +79,11 @@ public class CUI {
                       
                       case 7: 
                          
-                          up1.writePortfolioToFile(portfolio.getPortfolio(), "./resources/portfolioSave.txt");
+                          up1.writePortfolioToFile(portfolio.getPortfolio(), "./resources/portfolioSave.txt"); //no longer writing to files, instead inputting to DataBase.
                           break;
                       case 8:
                         
-                         for(Asset asset :AssetsFileUpdatingTool.readPortfolioFromFile("./resources/importedPortfolio.txt")){
+                         for(Asset asset :ImportAssetListFromCSVFile.readPortfolioFromFile("./resources/importedPortfolio.txt")){
                           
                              importedPortfolio.addAssetToPort(asset);
                              
@@ -127,13 +127,13 @@ public class CUI {
                       
                       case 15: 
                           
-                          AssetsFileUpdatingTool.writePortfolioToFile(importedPortfolio.getPortfolio(), "./resources/importedPortfolio.txt");
+                          ImportAssetListFromCSVFile.writePortfolioToFile(importedPortfolio.getPortfolio(), "./resources/importedPortfolio.txt");
                           break;
                           
                       case 99: 
                           System.out.println("Saving files");
                           up1.writePortfolioToFile(portfolio.getPortfolio(), "./resources/portfolioSave.txt");
-                           AssetsFileUpdatingTool.writePortfolioToFile(importedPortfolio.getPortfolio(), "./resources/importedPortfolio.txt");
+                           ImportAssetListFromCSVFile.writePortfolioToFile(importedPortfolio.getPortfolio(), "./resources/importedPortfolio.txt");
                          break;
                          
                   default:

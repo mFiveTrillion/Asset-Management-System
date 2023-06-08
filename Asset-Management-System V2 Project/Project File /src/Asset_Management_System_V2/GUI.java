@@ -8,6 +8,9 @@ package Asset_Management_System_V2;
  *
  * @author hayden
  */
-public class DBUpdater {
+public class GUI {
+ 
+    
+    
     
 }

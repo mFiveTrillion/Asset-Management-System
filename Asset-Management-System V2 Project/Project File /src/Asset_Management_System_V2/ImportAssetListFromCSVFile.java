@@ -8,50 +8,20 @@ package Asset_Management_System_V2;
  *
  * @author hayden
  */
-import java.io.FileWriter;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 import java.io.BufferedReader;
 import java.io.FileReader;
-
-public class AssetsFileUpdatingTool {
-    
-    public static void writePortfolioToFile(List<Asset> portfolio, String file){
-        
-     try{
-         
-         FileWriter writer = new FileWriter("./resources/portfolioSave.txt");
-         
-         writer.write("Name,Type,Purchase Date,Purchase Price,Shares,Symbole,Market Value\n");
-          for(Asset asset : portfolio){
-           
-              writer.write(String.format("%s,%s,%s,%.2f,%.2f\n",
-                        asset.getAssetidentification(),
-                        asset.getAssetType(),
-                        asset.getAcqDate(),
-                        asset.getAcqCost(),
-                        asset.getMarketValue()));
-              
-                      
-                }  
-          writer.close();
-          System.out.println("Successfully wrote portfolio to file");
-                      
-         
-     }catch(IOException e){
-         
-         System.err.println("Error writing to file");
-         e.printStackTrace();
-         e.getMessage();
-     }
-    }
-    
+//*******CONVERT TO CSV reader for importing function.*****//
+public class ImportAssetListFromCSVFile {
+   
      public static List<Asset> readPortfolioFromFile(String file){
          
       List<Asset> portfolio = new ArrayList<>();    
          
-         try(BufferedReader br = new BufferedReader(new FileReader("./resources/importedPortfolio.txt"))){
+         try(BufferedReader br = new BufferedReader(new FileReader("./resources/importedPortfolio.txt"))){ //copy and paste order list into given file, for program to read
              
              String eachLine; 
              boolean firstLine = true;  
@@ -62,7 +32,7 @@ public class AssetsFileUpdatingTool {
                   continue;
                  }
                  
-                 String[] fields = eachLine.split(",");
+                 String[] fields = eachLine.split(","); //format seperator
                  String assetIdentification = fields[0];
                  String assetType = fields[1];
                  String acqDate = fields[2];
