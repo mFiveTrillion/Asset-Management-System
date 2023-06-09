@@ -3,10 +3,16 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Users/hayden/NetBeansProjects/Asset_Management_System/New%20Folder%20With%20Items/resources/portfolioSave.txt</file>
-            <file>file:/Users/hayden/NetBeansProjects/Asset_Management_System/New%20Folder%20With%20Items/src/Asset_Management_System/App_Asset_Management_System_App.java</file>
-            <file>file:/Users/hayden/NetBeansProjects/Asset_Management_System/New%20Folder%20With%20Items/src/Asset_Management_System/PortfolioMetricsCalc.java</file>
-            <file>file:/Users/hayden/NetBeansProjects/Asset_Management_System/New%20Folder%20With%20Items/resources/importedPortfolio.txt</file>
+            <file>file:/Users/hayden/Desktop/Asset-Management-System/Asset-Management-System%20V2%20Project/Project%20File%20/src/Asset_Management_System_V2/App_Asset_Management_System_App.java</file>
+            <file>file:/Users/hayden/Desktop/Asset-Management-System/Asset-Management-System%20V2%20Project/Project%20File%20/src/Asset_Management_System_V2/DBSystem.java</file>
+            <file>file:/Users/hayden/Desktop/Asset-Management-System/Asset-Management-System%20V2%20Project/Project%20File%20/src/Asset_Management_System_V2/CUI.java</file>
+            <file>file:/Users/hayden/Desktop/Asset-Management-System/Asset-Management-System%20V2%20Project/Project%20File%20/src/Asset_Management_System_V2/GUI.java</file>
+            <file>file:/Users/hayden/Desktop/Asset-Management-System/Asset-Management-System%20V2%20Project/Project%20File%20/src/Asset_Management_System_V2/ImportAssetListFromCSVFile.java</file>
+            <file>file:/Users/hayden/Desktop/Asset-Management-System/Asset-Management-System%20V2%20Project/Project%20File%20/src/Asset_Management_System_V2/PortfolioMetricsCalc.java</file>
+            <file>file:/Users/hayden/Desktop/Asset-Management-System/Asset-Management-System%20V2%20Project/Project%20File%20/src/Asset_Management_System_V2/AssetManagementSystemDAO.java</file>
+            <file>file:/Users/hayden/Desktop/Asset-Management-System/Asset-Management-System%20V2%20Project/Project%20File%20/src/Asset_Management_System_V2/Asset.java</file>
+            <file>file:/Users/hayden/Desktop/Asset-Management-System/Asset-Management-System%20V2%20Project/Project%20File%20/src/Asset_Management_System_V2/Portfolio.java</file>
+            <file>file:/Users/hayden/Desktop/Asset-Management-System/Asset-Management-System%20V2%20Project/Project%20File%20/src/Asset_Management_System_V2/intergratedSystem.java</file>
         </group>
     </open-files>
 </project-private>

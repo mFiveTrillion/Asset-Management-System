@@ -8,17 +8,6 @@ package Asset_Management_System_V2;
  *
  * @author hayden
  */
-public class DBSystem {
-    
-    
-    //method to update portfolio 
-        //Buy/Sell conditioning
-    
-    
-    //Method to output/read the data table input into portfolio object
-    
-    
-    
-    
+public class intergratedSystem {
     
 }

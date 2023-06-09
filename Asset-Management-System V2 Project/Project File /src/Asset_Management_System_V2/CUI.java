@@ -19,7 +19,7 @@ public class CUI {
      
         PortfolioMetricsCalc metrics = new PortfolioMetricsCalc(portfolio);
         Portfolio importedPortfolio = new Portfolio();
-         ImportAssetListFromCSVFile up1 = new ImportAssetListFromCSVFile();
+        ImportOrderForm up1 = new ImportOrderForm();
         
         Scanner scan = new Scanner(System.in);
         int input = 0;
@@ -83,7 +83,7 @@ public class CUI {
                           break;
                       case 8:
                         
-                         for(Asset asset :ImportAssetListFromCSVFile.readPortfolioFromFile("./resources/importedPortfolio.txt")){
+                         for(Asset asset :ImportOrderForm.readPortfolioFromFile("./resources/importedPortfolio.txt")){
                           
                              importedPortfolio.addAssetToPort(asset);
                              
@@ -127,13 +127,13 @@ public class CUI {
                       
                       case 15: 
                           
-                          ImportAssetListFromCSVFile.writePortfolioToFile(importedPortfolio.getPortfolio(), "./resources/importedPortfolio.txt");
+                          ImportOrderForm.writePortfolioToFile(importedPortfolio.getPortfolio(), "./resources/importedPortfolio.txt");
                           break;
                           
                       case 99: 
                           System.out.println("Saving files");
                           up1.writePortfolioToFile(portfolio.getPortfolio(), "./resources/portfolioSave.txt");
-                           ImportAssetListFromCSVFile.writePortfolioToFile(importedPortfolio.getPortfolio(), "./resources/importedPortfolio.txt");
+                           ImportOrderForm.writePortfolioToFile(importedPortfolio.getPortfolio(), "./resources/importedPortfolio.txt");
                          break;
                          
                   default:

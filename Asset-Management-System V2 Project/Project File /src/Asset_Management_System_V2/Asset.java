@@ -8,6 +8,17 @@ package Asset_Management_System_V2;
  *
  * @author hayden
  */
+import java.io.IOException;
+import java.util.List;
+import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 public class Asset {
  
     private String assetIdentification; //Identification ID of asset (Unique to every asset in portfolio)
@@ -19,17 +30,33 @@ public class Asset {
     private double holdings;
   
         
-    public Asset(String assetidentification, String assetType, String acqDate, double acqCost, double marketValue) {
-            this.assetIdentification = assetidentification;
-            this.assetType = assetType;
-            this.acqDate = acqDate;
-            this.acqCost = acqCost;
-            this.marketValue = marketValue;
-            this.netReturn = marketValue - acqCost; 
-            this.holdings = acqCost + this.netReturn;
+    public Asset(String assetidentification, Connection connection) {
+            this.assetIdentification = assetIdentification;
+            loadFromDatabase(connection);
+                   
            
         }
-
+    
+    private void loadFromDatabase(Connection connection) throws SQLException{
+        
+        String query = "SELECT TYPE, ACQ_DATE, ACQ_COSTS, MARKET_VAL, HOLDINGS, TOTAL_ASSET_VALUE FROM PORTFOLIO WHERE ID = ?";
+        PreparedStatement statement = connection.prepareStatement(query);
+        
+        statement.setString(1, assetIdentification);
+        
+        ResultSet resultSet = statement.executeQuery();
+        
+        if (resultSet.next()) {
+            assetType = resultSet.getString("TYPE");
+            acqDate = resultSet.getString("ACQ_DATE");
+            acqCost = resultSet.getDouble("ACQ)_COST");
+            marketValue = resultSet.getDouble("MARKET_VAL");
+        } else {
+            throw new IllegalArgumentException("Asset with identification " + assetIdentification + " not found in the database.");
+        }
+    
+        
+    }
             public String getAssetidentification() {
                 return assetIdentification;
             }
