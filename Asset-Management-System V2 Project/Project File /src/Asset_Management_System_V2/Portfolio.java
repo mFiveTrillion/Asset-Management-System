@@ -14,6 +14,17 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.*;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 public class Portfolio {
     
     private List<Asset> portfolio;
@@ -124,7 +135,7 @@ public class Portfolio {
     
     }
     
-    public void buy(Portfolio portfolio, String newAssetID){ //allows user to pass in a new asset, search the hashset if it already exists - if so, the asset is added to that already there, if not the new asset is added to set and list array
+    public void buyAsset(Portfolio portfolio, String newAssetID){ //allows user to pass in a new asset, search the hashset if it already exists - if so, the asset is added to that already there, if not the new asset is added to set and list array
        
         Scanner scan = new Scanner(System.in);
         boolean found = false;
@@ -137,11 +148,13 @@ public class Portfolio {
                     System.out.println("Enter acquisition Cost: (Dollar Amount)");
                     acqCostOfNewPurchase = scan.nextDouble();
 
-                   
-                    System.out.println("Bought " + "$" + acqCostOfNewPurchase + " more of" + asset.getAssetidentification());
-                    asset.updateHoldingsBuy(acqCostOfNewPurchase);
-                    System.out.println("\nNow hold $" + asset.getHoldings() + " of " + asset.getAssetidentification());
                     found = true; 
+                    System.out.println("Bought " + "$" + acqCostOfNewPurchase + " more of" + asset.getAssetidentification());
+                    
+                    
+                    
+                    System.out.println("\nNow hold $" + asset.getHoldings() + " of " + asset.getAssetidentification());
+                   
                    
                             
                 }
@@ -155,6 +168,8 @@ public class Portfolio {
                  String acqDate = scan.nextLine();
                  System.out.println("Enter the acquisition cost:");
                  double acqCost = scan.nextDouble();
+                 System.out.println("Enter amount (e.g. # of sahres ");
+                 double holdings = scan.nextDouble();
                  System.out.println("Enter the market value:");
                  double marketValue = scan.nextDouble();
 
@@ -162,11 +177,12 @@ public class Portfolio {
 
                  System.out.println("New asset: " + newAssetID + " added to portfolio");
               
-                 portfolio.getPortfolio().add(newAsset);
+                 portfolio.getPortfolio().add(newAsset)z
 
                 }
+
     }
-     public void sell(Set<Asset> assets, String assetID){ //method to sell all or part of holdings for a specific asset defined by user input and passed in as parameters
+     public void sellAsset(Set<Asset> assets, String assetID){ //method to sell all or part of holdings for a specific asset defined by user input and passed in as parameters
          
         Scanner scan = new Scanner(System.in);
         boolean found = false;
@@ -236,6 +252,108 @@ public class Portfolio {
         
         
     }
+    
+    public void updateDB  (String ID, String type, String date, double acq_costs, double marketValue, double amountBought, Connection connection, String buyOrSell, String foundOrNot)throws SQLException{
+        
+      switch(buyOrSell){
+          
+          case "BUY":
+              
+              if(foundOrNot == "F"){
+                  
+                  String query = "SELECT HOLDINGS FROM PORTFOLIO WHERE ID = ?";
+                  PreparedStatement statement = connection.prepareStatement(query);
+                  
+                  statement.setString(1, ID);
+                  
+                  ResultSet resultSet = statement.executeQuery();
+                  
+                  if(resultSet.next()){
+                      
+                    double holdings = resultSet.getDouble("HOLDINGS");
+                    double newHoldings = holdings + amountBought;
+                    double currentAcq_costs = resultSet.getDouble("ACQ_COSTS");
+                    double newAcq_costs = currentAcq_costs + acq_costs;
+                    
+                    
+                    String updateQuery = "UPDATE PORTFOLIO SET HOLDINGS = ? WHERE ID = ?";
+                    PreparedStatement updateStatement = connection.prepareStatement(query);
+                     
+                   updateStatement.setDouble(6, newHoldings);
+                   updateStatement.setDouble(4, newAcq_costs);
+                   updateStatement.setString(1, ID);
+                   
+                   updateStatement.execute();
+                   
+                   System.out.println("Database updated with purchase");
+                      
+                      
+                  }else{
+                      
+                       String insertQuery = "INSERT INTO PORTFOLIO (ID, ASSET_TYPE, ACQUISITION_DATE, ACQUISITION_COST, MARKET_VALUE) VALUES (?, ?, ?, ?, ?)";
+                        statement = connection.prepareStatement(insertQuery);
+
+                        statement.setString(1, ID );
+                        statement.setString(2, type);
+                        statement.setString(3, date);
+                        statement.setDouble(4, acq_costs);
+                        statement.setDouble(5, marketValue);
+
+                        statement.executeUpdate();
+
+                        System.out.println("New asset added to the database successfully.");
+                      
+                      
+                  }
+              }else{
+                  
+                  
+                  
+                  
+              }
+              
+              
+              
+              break;
+          
+          case "SELL":
+              
+              if(foundOrNot == "NF"){
+                  
+                  
+                  
+                  
+              }else{
+                  
+                  
+                  
+                  
+              }
+              
+              
+              
+              break;
+              
+              
+              
+          default: 
+              System.err.println("ERROR EXECUTING BUY/SELL FUNCTION");
+          
+          
+          
+          
+          
+          
+          
+      }
+        
+        
+        
+        
+    }
+    
+    
+    
 }
   
 

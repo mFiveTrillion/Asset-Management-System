@@ -66,7 +66,7 @@ public class CUI {
                           String newAssetID;
                           System.out.println("Enter the new AssetID: ");
                           newAssetID = scan.nextLine();
-                          portfolio.buy(portfolio, newAssetID);
+                          portfolio.buyAsset(portfolio, newAssetID);
                           
                           break;
                           
@@ -74,7 +74,7 @@ public class CUI {
                           String sellAssetID;
                           System.out.println("Enter the AssetID: ");
                           sellAssetID = scan.nextLine();
-                          portfolio.sell(portfolio.getAssetSet(portfolio.getPortfolio()), sellAssetID);
+                          portfolio.sellAsset(portfolio.getAssetSet(portfolio.getPortfolio()), sellAssetID);
                           break;
                       
                       case 7: 
@@ -114,7 +114,7 @@ public class CUI {
                           String impAssetID;
                           System.out.println("Enter the new AssetID: ");
                           impAssetID = scan.nextLine();
-                          importedPortfolio.buy(importedPortfolio, impAssetID);
+                          importedPortfolio.buyAsset(importedPortfolio, impAssetID);
                           
                           break;
                           
@@ -122,7 +122,7 @@ public class CUI {
                           String impSellAssetID;
                           System.out.println("Enter the AssetID: ");
                           impSellAssetID = scan.nextLine();
-                          importedPortfolio.sell(importedPortfolio.getAssetSet(importedPortfolio.getPortfolio()), impSellAssetID);
+                          importedPortfolio.sellAsset(importedPortfolio.getAssetSet(importedPortfolio.getPortfolio()), impSellAssetID);
                           break;
                       
                       case 15: 
