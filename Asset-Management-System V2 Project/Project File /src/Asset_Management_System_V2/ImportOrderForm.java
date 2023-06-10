@@ -22,12 +22,12 @@ import java.sql.SQLException;
 
 public class ImportOrderForm {
    
-    public static void importPortfolioAndUpdateDatabase(String file, List<Asset> originalPortfolio) {
-        List<Asset> portfolio = readPortfolioFromFile("./resources/importedPortfolio.txt");
+    public static void importPortfolioAndUpdateDatabase(String file, List<Asset> originalPortfolio, Connection connection)throws SQLException {
+        List<Asset> portfolio = readPortfolioFromFile("./resources/importedPortfolio.txt", connection);
         updateDatabase(portfolio);
     }
     
-     public static List<Asset> readPortfolioFromFile(String file){
+     public static List<Asset> readPortfolioFromFile(String file, Connection connection)throws SQLException{
          
       List<Asset> portfolio = new ArrayList<>();    
          
@@ -54,22 +54,22 @@ public class ImportOrderForm {
                      
                      case "Stock":
                          
-                        portfolio.add(new Stock(assetIdentification, assetType, acqDate, acqCost, marketValue));
+                        portfolio.add(new Stock(assetIdentification, connection));
                          break;
                          
                      case "RealEstate": 
                          
-                        portfolio.add( new RealEstate(assetIdentification, assetType, acqDate, acqCost, marketValue));
+                        portfolio.add( new RealEstate(assetIdentification, connection));
                          break;
                          
                      case "ETF":
                          
-                        portfolio.add(new ETF(assetIdentification, assetType, acqDate, acqCost, marketValue));
+                        portfolio.add(new ETF(assetIdentification, connection));
                          break;
                          
                      default:
                          
-                       portfolio.add(new Asset(assetIdentification, assetType, acqDate, acqCost, marketValue));
+                       portfolio.add(new Asset(assetIdentification, connection));
                          break;
                      
                      

@@ -30,7 +30,7 @@ public class Asset {
     private double holdings;
   
         
-    public Asset(String assetidentification, Connection connection) {
+    public Asset(String assetidentification, Connection connection) throws SQLException{
             this.assetIdentification = assetIdentification;
             loadFromDatabase(connection);
                    
