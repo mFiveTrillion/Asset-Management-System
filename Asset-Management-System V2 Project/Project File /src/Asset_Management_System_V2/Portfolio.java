@@ -42,7 +42,7 @@ public class Portfolio {
     }
     
     
-    public void addAssetToPort(Asset asset){
+    public void addAssetsToPort(Asset asset){
      
         portfolio.add(asset);
     }

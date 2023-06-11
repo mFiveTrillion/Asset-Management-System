@@ -15,20 +15,20 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class databaseManager {
+    public final class DatabaseManager {
     private static final String DATABASE_URL = "jdbc:derby:assetman;create=true";
     private static final String USERNAME = "pdc";
     private static final String PASSWORD = "pdc";
 
     private Connection connection;
 
-    public databaseManager() {
+    public DatabaseManager() throws SQLException {
         
         getConnection();
         
     }
     
-    public void getConnection(){
+    public Connection getConnection()throws SQLException{
         
        try {
             connection = DriverManager.getConnection(DATABASE_URL, USERNAME, PASSWORD);
@@ -36,7 +36,8 @@ public class databaseManager {
             e.printStackTrace();
         }   
         
-        
+     return connection;
+       
     }
     public void closeConnection() {
         if (connection != null) {

@@ -4,6 +4,8 @@
  */
 package Asset_Management_System_V2;
 
+import java.sql.SQLException;
+
 /**
  *
  * @author hayden
@@ -13,12 +15,12 @@ public class App_Asset_Management_System_App {
     /**
      * 
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         
         Portfolio p1 = new Portfolio();
-       // CUI c = new CUI();
-       // c.commandUserInterface(p1);
-    //
+        GUI gui = new GUI();
+        gui.frame.setVisible(true);
+        
     }
     
 }

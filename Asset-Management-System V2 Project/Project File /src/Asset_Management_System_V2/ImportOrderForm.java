@@ -22,9 +22,16 @@ import java.sql.SQLException;
 
 public class ImportOrderForm {
    
-    public static void importPortfolioAndUpdateDatabase(String file, List<Asset> originalPortfolio, Connection connection)throws SQLException {
-        List<Asset> portfolio = readPortfolioFromFile("./resources/importedPortfolio.txt", connection);
+    private List<Asset> portfolio;
+    
+    public void importPortfolioAndUpdateDatabase( Connection connection)throws SQLException {
+       try{ List<Asset> portfolio = readPortfolioFromFile("./resources/importedPortfolio.txt", connection);
         updateDatabase(portfolio);
+        
+       }catch(SQLException e){
+           
+          e.printStackTrace();
+       }
     }
     
      public static List<Asset> readPortfolioFromFile(String file, Connection connection)throws SQLException{
