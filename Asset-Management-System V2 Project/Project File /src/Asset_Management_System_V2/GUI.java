@@ -10,16 +10,8 @@ package Asset_Management_System_V2;
  */
 public class GUI {
  
-    public void updateDB(Portfolio portfolio){
-     
-        PortfolioMetricsCalc metrics = new PortfolioMetricsCalc(portfolio);
-        Portfolio importedPortfolio = new Portfolio();
-        ImportOrderForm up1 = new ImportOrderForm();
-        
-        
-        
-        
-    }
+    
+    
     
     
 }

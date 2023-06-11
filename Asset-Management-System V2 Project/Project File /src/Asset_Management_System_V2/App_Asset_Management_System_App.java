@@ -16,9 +16,9 @@ public class App_Asset_Management_System_App {
     public static void main(String[] args) {
         
         Portfolio p1 = new Portfolio();
-        CUI c = new CUI();
-        c.commandUserInterface(p1);
-    
+       // CUI c = new CUI();
+       // c.commandUserInterface(p1);
+    //
     }
     
 }

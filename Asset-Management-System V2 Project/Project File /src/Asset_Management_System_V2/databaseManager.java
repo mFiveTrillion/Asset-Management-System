@@ -16,7 +16,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class databaseManager {
-    private static final String DATABASE_URL = "jdbc:derby:PORTFOLIO";
+    private static final String DATABASE_URL = "jdbc:derby:assetman;create=true";
     private static final String USERNAME = "pdc";
     private static final String PASSWORD = "pdc";
 

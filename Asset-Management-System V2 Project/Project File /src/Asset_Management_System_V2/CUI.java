@@ -8,6 +8,7 @@ package Asset_Management_System_V2;
  *
  * @author hayden
  */
+/*
 import java.util.Scanner;
 import java.util.List;
 import java.util.ArrayList;
@@ -66,7 +67,7 @@ public class CUI {
                           String newAssetID;
                           System.out.println("Enter the new AssetID: ");
                           newAssetID = scan.nextLine();
-                          portfolio.buyAsset(portfolio, newAssetID);
+                          //portfolio.buyAsset(portfolio, newAssetID);
                           
                           break;
                           
@@ -74,16 +75,16 @@ public class CUI {
                           String sellAssetID;
                           System.out.println("Enter the AssetID: ");
                           sellAssetID = scan.nextLine();
-                          portfolio.sellAsset(portfolio.getAssetSet(portfolio.getPortfolio()), sellAssetID);
+                          //portfolio.sellAsset(portfolio.getAssetSet(portfolio.getPortfolio()), sellAssetID);
                           break;
                       
                       case 7: 
                          
-                          up1.writePortfolioToFile(portfolio.getPortfolio(), "./resources/portfolioSave.txt"); //no longer writing to files, instead inputting to DataBase.
+                         // up1.writePortfolioToFile(portfolio.getPortfolio(), "./resources/portfolioSave.txt"); //no longer writing to files, instead inputting to DataBase.
                           break;
                       case 8:
                         
-                         for(Asset asset :ImportOrderForm.readPortfolioFromFile("./resources/importedPortfolio.txt")){
+                        // for(Asset asset :ImportOrderForm.readPortfolioFromFile("./resources/importedPortfolio.txt")){
                           
                              importedPortfolio.addAssetToPort(asset);
                              
@@ -149,7 +150,7 @@ public class CUI {
                 System.err.println("Invalid input, Please enter a number.");
             }
                 
-        }while(input != 99);
+                }while(input != 99);
         
         
         
@@ -157,3 +158,4 @@ public class CUI {
         
     }
 }
+*/
