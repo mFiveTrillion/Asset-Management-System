@@ -23,10 +23,13 @@ public class GUI {
  
     public JFrame frame;
     private JButton importButton;
+    private JFrame importMessage;
     private JLabel label;
+    
    private JButton buyButton;
    private JButton sellButton;
    private JButton performanceButton;
+   private JButton displayPortButton;
     public ImportOrderForm importer; 
     public DatabaseManager dbMan;
     public Portfolio portfolio;
@@ -47,7 +50,7 @@ public class GUI {
        
        frame = new JFrame("Asset Management System");
        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-       frame.setSize(500, 400);
+       frame.setSize(500, 700);
        frame.setLayout(null);
        
        //button to import ASSETS from CSV file
@@ -55,21 +58,26 @@ public class GUI {
         importButton.setBounds(100, 50, 200, 30);
         importButton.addActionListener(e -> {
            
-            try {
-           
-               importer.importPortfolioAndUpdateDatabase(dbMan.getConnection());
-               
-           } catch (SQLException ex) {
-               Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
-           }
-        label.setText("Importing orders into Database");
-       
-           try {
-               portfolio.addAssetToPort(dbMan.getConnection());
-           } catch (SQLException ex) {
-               Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
-           }
-        });
+         int choice = JOptionPane.showConfirmDialog(frame, "Are you sure you want to import the order form?", "Confirmation", JOptionPane.YES_NO_OPTION);
+            if (choice == JOptionPane.YES_OPTION) {
+                try {
+                    importer.importPortfolioAndUpdateDatabase(dbMan.getConnection());
+                    portfolio.addAssetToPort(dbMan.getConnection());
+                 
+                } catch (SQLException ex) {
+                    Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                label.setText("Importing orders into Database");
+
+
+
+                   try {
+                       portfolio.addAssetToPort(dbMan.getConnection());
+                   } catch (SQLException ex) {
+                       Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                   }
+                  }
+                });
       
         frame.add(importButton);
         
@@ -91,7 +99,7 @@ public class GUI {
         
         metricsPanel.add(portAssetWeightingLabel);
         
-        metricsPanel.setBounds(50, 250, 200, 100);
+        metricsPanel.setBounds(50, 300, 200, 100);
         frame.add(metricsPanel);
         
         //performance based list
@@ -170,13 +178,31 @@ public class GUI {
         
         frame.add(sellButton);
 
-   }
+        //display portfolio button
+        displayPortButton = new JButton("Display portfolio");
+        displayPortButton.setBounds(100, 250, 200, 30);
+        displayPortButton.addActionListener(e -> {
+            
+            JTextArea portfolioTextArea = new JTextArea();
+       portfolioTextArea.setEditable(false);
 
-    
-    
-    
-    
-    
-    
-    
+       for (Asset asset : portfolio.getPortfolio()) {
+           portfolioTextArea.append(asset.toString());
+           portfolioTextArea.append("\n");
+       }
+
+       JDialog portfolioDialog = new JDialog(frame, "Portfolio", true);
+       portfolioDialog.setSize(400, 300);
+       portfolioDialog.setLayout(new BorderLayout());
+
+       portfolioDialog.add(new JScrollPane(portfolioTextArea), BorderLayout.CENTER);
+
+       portfolioDialog.setVisible(true);
+
+      
+      });
+        
+        frame.add(displayPortButton);
+   }            
+                
 }

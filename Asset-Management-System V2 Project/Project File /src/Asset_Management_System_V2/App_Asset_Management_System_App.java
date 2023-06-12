@@ -16,6 +16,9 @@ public class App_Asset_Management_System_App {
      * 
      */
     public static void main(String[] args) throws SQLException {
+        DatabaseManager db = new DatabaseManager();
+        db.getConnection();
+        db.createAccountsTable();
         
         Portfolio p1 = new Portfolio();
         GUI gui = new GUI();

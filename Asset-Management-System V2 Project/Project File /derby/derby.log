@@ -1,0 +1,115 @@
+----------------------------------------------------------------
+Fri Jun 09 21:30:34 NZST 2023:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.16.1.1 - (1901046): instance a816c00e-0188-9f7e-4da3-000062d3abf8 
+on database directory /Users/hayden/Library/Application Support/NetBeans/17/derby/assetman with class loader DbURLClassLoader[urls=[file:/Users/hayden/Desktop/jdb2/db-derby-10.16.1.1-bin%202/lib/derby.jar, file:/Users/hayden/Desktop/jdb2/db-derby-10.16.1.1-bin%202/lib/derbyshared.jar, file:/Users/hayden/Desktop/jdb2/db-derby-10.16.1.1-bin%202/lib/derbytools.jar]] 
+Loaded from file:/Users/hayden/Desktop/jdb2/db-derby-10.16.1.1-bin%202/lib/derby.jar
+java.vendor=Oracle Corporation
+java.runtime.version=19.0.2+7-44
+user.dir=/
+os.name=Mac OS X
+os.arch=aarch64
+os.version=12.6
+derby.system.home=/Users/hayden/Library/Application Support/NetBeans/17/derby
+Database Class Loader started - derby.database.classpath=''
+----------------------------------------------------------------
+Sun Jun 11 22:30:28 NZST 2023: Shutting down Derby engine
+
+------------  Begin Shutdown Error Stack -------------
+
+ERROR XSLAQ: Cannot create log file at directory /Users/hayden/Library/Application Support/NetBeans/17/derby/assetman/log.
+	at org.apache.derby.shared.common.error.StandardException.newException(StandardException.java:299)
+	at org.apache.derby.shared.common.error.StandardException.newException(StandardException.java:294)
+	at org.apache.derby.impl.store.raw.log.LogToFile.getLogDirectory(LogToFile.java:2782)
+	at org.apache.derby.impl.store.raw.log.LogToFile.getControlFileName(LogToFile.java:2815)
+	at org.apache.derby.impl.store.raw.log.LogToFile.checkpointWithTran(LogToFile.java:1750)
+	at org.apache.derby.impl.store.raw.log.LogToFile.checkpoint(LogToFile.java:1503)
+	at org.apache.derby.impl.store.raw.RawStore.stop(RawStore.java:362)
+	at org.apache.derby.impl.services.monitor.TopService.stop(TopService.java:443)
+	at org.apache.derby.impl.services.monitor.TopService.shutdown(TopService.java:394)
+	at org.apache.derby.impl.services.monitor.BaseMonitor.shutdown(BaseMonitor.java:219)
+	at org.apache.derby.impl.services.monitor.FileMonitor.shutdown(FileMonitor.java:45)
+	at org.apache.derby.impl.services.monitor.BaseMonitor.shutdown(BaseMonitor.java:190)
+	at org.apache.derby.impl.services.monitor.FileMonitor.shutdown(FileMonitor.java:45)
+	at org.apache.derby.iapi.jdbc.InternalDriver.connect(InternalDriver.java:286)
+	at org.apache.derby.iapi.jdbc.InternalDriver.connect(InternalDriver.java:922)
+	at org.apache.derby.jdbc.EmbeddedDriver.connect(EmbeddedDriver.java:125)
+	at org.netbeans.modules.db.explorer.DbDriverManager.getSameDriverConnection(DbDriverManager.java:150)
+	at org.netbeans.modules.db.explorer.DerbyConectionEventListener.afterDisconnect(DerbyConectionEventListener.java:90)
+	at org.netbeans.modules.db.explorer.DatabaseConnection.disconnect(DatabaseConnection.java:1254)
+	at org.netbeans.modules.db.explorer.action.DisconnectAction$1.run(DisconnectAction.java:92)
+	at org.openide.util.RequestProcessor$Task.run(RequestProcessor.java:1418)
+	at org.netbeans.modules.openide.util.GlobalLookup.execute(GlobalLookup.java:45)
+	at org.openide.util.lookup.Lookups.executeWith(Lookups.java:287)
+	at org.openide.util.RequestProcessor$Processor.run(RequestProcessor.java:2033)
+
+
+------------  End Shutdown Error Stack -------------
+
+
+------------  Begin Shutdown Error Stack -------------
+
+ERROR XSLAQ: Cannot create log file at directory /Users/hayden/Library/Application Support/NetBeans/17/derby/assetman/log.
+	at org.apache.derby.shared.common.error.StandardException.newException(StandardException.java:299)
+	at org.apache.derby.shared.common.error.StandardException.newException(StandardException.java:294)
+	at org.apache.derby.impl.store.raw.log.LogToFile.getLogDirectory(LogToFile.java:2782)
+	at org.apache.derby.impl.store.raw.log.LogToFile.getControlFileName(LogToFile.java:2815)
+	at org.apache.derby.impl.store.raw.log.LogToFile.checkpointWithTran(LogToFile.java:1750)
+	at org.apache.derby.impl.store.raw.log.LogToFile.checkpoint(LogToFile.java:1503)
+	at org.apache.derby.impl.store.raw.RawStore.stop(RawStore.java:362)
+	at org.apache.derby.impl.services.monitor.TopService.stop(TopService.java:443)
+	at org.apache.derby.impl.services.monitor.TopService.shutdown(TopService.java:394)
+	at org.apache.derby.impl.services.monitor.BaseMonitor.shutdown(BaseMonitor.java:219)
+	at org.apache.derby.impl.services.monitor.FileMonitor.shutdown(FileMonitor.java:45)
+	at org.apache.derby.impl.services.monitor.BaseMonitor.shutdown(BaseMonitor.java:190)
+	at org.apache.derby.impl.services.monitor.FileMonitor.shutdown(FileMonitor.java:45)
+	at org.apache.derby.iapi.jdbc.InternalDriver.connect(InternalDriver.java:286)
+	at org.apache.derby.iapi.jdbc.InternalDriver.connect(InternalDriver.java:922)
+	at org.apache.derby.jdbc.EmbeddedDriver.connect(EmbeddedDriver.java:125)
+	at org.netbeans.modules.db.explorer.DbDriverManager.getSameDriverConnection(DbDriverManager.java:150)
+	at org.netbeans.modules.db.explorer.DerbyConectionEventListener.afterDisconnect(DerbyConectionEventListener.java:90)
+	at org.netbeans.modules.db.explorer.DatabaseConnection.disconnect(DatabaseConnection.java:1254)
+	at org.netbeans.modules.db.explorer.action.DisconnectAction$1.run(DisconnectAction.java:92)
+	at org.openide.util.RequestProcessor$Task.run(RequestProcessor.java:1418)
+	at org.netbeans.modules.openide.util.GlobalLookup.execute(GlobalLookup.java:45)
+	at org.openide.util.lookup.Lookups.executeWith(Lookups.java:287)
+	at org.openide.util.RequestProcessor$Processor.run(RequestProcessor.java:2033)
+
+
+------------  End Shutdown Error Stack -------------
+
+
+------------  Begin Shutdown Error Stack -------------
+
+ERROR XSLAQ: Cannot create log file at directory /Users/hayden/Library/Application Support/NetBeans/17/derby/assetman/log.
+	at org.apache.derby.shared.common.error.StandardException.newException(StandardException.java:299)
+	at org.apache.derby.shared.common.error.StandardException.newException(StandardException.java:294)
+	at org.apache.derby.impl.store.raw.log.LogToFile.getLogDirectory(LogToFile.java:2782)
+	at org.apache.derby.impl.store.raw.log.LogToFile.getControlFileName(LogToFile.java:2815)
+	at org.apache.derby.impl.store.raw.log.LogToFile.checkpointWithTran(LogToFile.java:1750)
+	at org.apache.derby.impl.store.raw.log.LogToFile.checkpoint(LogToFile.java:1503)
+	at org.apache.derby.impl.store.raw.RawStore.stop(RawStore.java:362)
+	at org.apache.derby.impl.services.monitor.TopService.stop(TopService.java:443)
+	at org.apache.derby.impl.services.monitor.TopService.shutdown(TopService.java:394)
+	at org.apache.derby.impl.services.monitor.BaseMonitor.shutdown(BaseMonitor.java:219)
+	at org.apache.derby.impl.services.monitor.FileMonitor.shutdown(FileMonitor.java:45)
+	at org.apache.derby.impl.services.monitor.BaseMonitor.shutdown(BaseMonitor.java:190)
+	at org.apache.derby.impl.services.monitor.FileMonitor.shutdown(FileMonitor.java:45)
+	at org.apache.derby.iapi.jdbc.InternalDriver.connect(InternalDriver.java:286)
+	at org.apache.derby.iapi.jdbc.InternalDriver.connect(InternalDriver.java:922)
+	at org.apache.derby.jdbc.EmbeddedDriver.connect(EmbeddedDriver.java:125)
+	at org.netbeans.modules.db.explorer.DbDriverManager.getSameDriverConnection(DbDriverManager.java:150)
+	at org.netbeans.modules.db.explorer.DerbyConectionEventListener.afterDisconnect(DerbyConectionEventListener.java:90)
+	at org.netbeans.modules.db.explorer.DatabaseConnection.disconnect(DatabaseConnection.java:1254)
+	at org.netbeans.modules.db.explorer.action.DisconnectAction$1.run(DisconnectAction.java:92)
+	at org.openide.util.RequestProcessor$Task.run(RequestProcessor.java:1418)
+	at org.netbeans.modules.openide.util.GlobalLookup.execute(GlobalLookup.java:45)
+	at org.openide.util.lookup.Lookups.executeWith(Lookups.java:287)
+	at org.openide.util.RequestProcessor$Processor.run(RequestProcessor.java:2033)
+
+
+------------  End Shutdown Error Stack -------------
+
+----------------------------------------------------------------
+Sun Jun 11 22:30:28 NZST 2023:
+Shutting down instance a816c00e-0188-9f7e-4da3-000062d3abf8 on database directory /Users/hayden/Library/Application Support/NetBeans/17/derby/assetman with class loader DbURLClassLoader[urls=[file:/Users/hayden/Desktop/jdb2/db-derby-10.16.1.1-bin%202/lib/derby.jar, file:/Users/hayden/Desktop/jdb2/db-derby-10.16.1.1-bin%202/lib/derbyshared.jar, file:/Users/hayden/Desktop/jdb2/db-derby-10.16.1.1-bin%202/lib/derbytools.jar]] 
+----------------------------------------------------------------

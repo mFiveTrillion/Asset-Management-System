@@ -30,6 +30,7 @@ public class Portfolio {
     public Asset asset; 
     private double totalValueOfAssetsUnderManagement;
     private double simpleReturn = 0.0;
+    private PopUpMessageWindow p = new PopUpMessageWindow();
     
     public Portfolio( ){
        
@@ -136,8 +137,11 @@ public class Portfolio {
             
                return netMap.get(assetIdentification);
            }else{
-               
+             
+            p.displayPopUp("Asset ID not found");
             throw new IllegalArgumentException("Asset ID not found");   
+           
+            
            }
           
      }
@@ -153,17 +157,28 @@ public class Portfolio {
        
      Scanner scan = new Scanner(System.in);
      String newAsset;
+     
+     while(true){
+         
      System.out.println("What asset would you like to buy: ");
      newAsset = scan.nextLine();
+       
+     if (!newAsset.isEmpty() && newAsset.matches("[a-zA-Z]+")) {
+              break;
+          } else {
+              System.out.println("Invalid asset ID. Please enter a valid string.");
+              p.displayPopUp("Invalid asset ID. Please enter a valid string.");
+          }
      
      boolean checkAssetExists = isAssetFound(newAsset, connection);
-   
+  
      if(checkAssetExists == true){
       
           System.out.println("\nAsset found!");
                     System.out.println("Enter acquisition Cost: (Dollar Amount)");
                     double acqCostOfNewPurchase = scan.nextDouble();
                    
+                    
 
                   
                     System.out.println("Bought " + "$" + acqCostOfNewPurchase + " more of" + newAsset);
@@ -175,6 +190,7 @@ public class Portfolio {
                        
      }else if(checkAssetExists == false){
          
+                 p.displayPopUp("New order created");
                  System.out.println("Enter the asset type:");
                  String assetType = scan.nextLine();
                  System.out.println("Enter the acquisition date (MM/DD/YYYY):");
@@ -189,16 +205,27 @@ public class Portfolio {
                  buyNewAsset(newAsset,assetType,acqDate,acqCost,marketValue,holdings,connection,checkAssetExists);        
          
          
-     }
-   
+            }
+       }
    }
-   
    
    public void sellAsset(Connection connection)throws SQLException{
        
         Scanner scan = new Scanner(System.in);
        
          String assetToSell;
+         
+         while(true){
+         
+     System.out.println("What asset would you like to sell: ");
+     assetToSell = scan.nextLine();
+       
+     if (!assetToSell.isEmpty() && assetToSell.matches("[a-zA-Z]+")) {
+              break;
+          } else {
+              System.out.println("Invalid asset ID. Please enter a valid string.");
+              p.displayPopUp("Invalid asset ID. Please enter a valid string.");
+          }
         System.out.println("What asset would you like to sell: ");
         assetToSell = scan.nextLine();
      
@@ -229,14 +256,20 @@ public class Portfolio {
                 
                     }else{
                     
+                    p.displayPopUp("Invalid input Y or N");
                     System.out.println("Invalid input");   
                     
                     
                 }
            
            
-       }
-       
+       }else{
+        
+           p.displayPopUp("Asset not found");
+           System.out.println("Asset not found");
+           return; 
+            }
+         }
    }
    
     
