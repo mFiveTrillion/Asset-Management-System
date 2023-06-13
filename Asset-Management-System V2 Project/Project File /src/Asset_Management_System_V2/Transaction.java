@@ -10,6 +10,13 @@ package Asset_Management_System_V2;
  */
 import java.util.ArrayList;
 import java.util.List;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 
 public class Transaction {
     
@@ -17,8 +24,10 @@ public class Transaction {
     private String assetID;
     private String acqDate; 
     private double acqCost; 
+    private final DatabaseManager db;
 
-    public Transaction(String assetID, String acqDate, double acqCost) {
+    public Transaction(String assetID, String acqDate, double acqCost) throws SQLException {
+        this.db = new DatabaseManager();
         this.assetID = assetID;
         this.acqDate = acqDate;
         this.acqCost = acqCost;
@@ -36,22 +45,31 @@ public class Transaction {
         return acqCost;
     }
 
-    public List<Transaction> transactionList(Portfolio portfolio){ 
+    public List<Transaction> getTransactionsFromDB()throws SQLException{
+   
+        List<Transaction> transactionList = new ArrayList<>();
+
         
-       List<Transaction> transactionList = new ArrayList<>();
-       
-       for(Asset asset: portfolio.getPortfolio()){
-           
-           if(asset.getAssetidentification() == null || asset.getAcqDate() == null || asset.getAcqCost() <= 0){
-            throw new IllegalArgumentException("Invalid asset data provided.");   
-           }
-           transactionList.add(new Transaction(asset.getAssetidentification(), asset.getAcqDate(), asset.getAcqCost()));
-           
-       }
+    try {
+        Connection connection = db.getConnection();
+        String query = "SELECT ID, ACQ_DATE, ACQ_COST FROM TRANSACTIONLIST";
         
-        return transactionList;
-        
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                String assetId = resultSet.getString("ID");
+                String acqDate = resultSet.getString("ACQ_DATE");
+                double acqCost = resultSet.getDouble("ACQ_COST");
+                transactionList.add(new Transaction(assetId, acqDate, acqCost));
+            }
+        }
+        connection.close();
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+
+    return transactionList;
+}
     
     
     

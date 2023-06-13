@@ -23,10 +23,12 @@ import java.sql.SQLException;
 public class ImportOrderForm {
    
     private List<Asset> portfolio;
+
     
     public void importPortfolioAndUpdateDatabase( Connection connection)throws SQLException {
+        
        try{ List<Asset> portfolio = readPortfolioFromFile("./resources/importedPortfolio.txt", connection);
-        updateDatabase(portfolio);
+        updateDatabase(portfolio, connection);
         
        }catch(SQLException e){
            
@@ -56,33 +58,15 @@ public class ImportOrderForm {
                  double acqCost = Double.parseDouble(fields[3]);
                  double marketValue = Double.parseDouble(fields[4]);
                  
-                 Asset asset; 
-                 switch(assetType){
-                     
-                     case "Stock":
-                         
-                        portfolio.add(new Stock(assetIdentification, connection));
-                         break;
-                         
-                     case "RealEstate": 
-                         
-                        portfolio.add( new RealEstate(assetIdentification, connection));
-                         break;
-                         
-                     case "ETF":
-                         
-                        portfolio.add(new ETF(assetIdentification, connection));
-                         break;
-                         
-                     default:
-                         
-                       portfolio.add(new Asset(assetIdentification, connection));
-                         break;
-                     
-                     
-                        
-                 }
+                 Asset asset = new Asset(assetIdentification, connection);
+                 asset.setAssetIdentification(assetIdentification);
+                 asset.setAssetType(assetType);
+                 asset.setAcqDate(acqDate);
+                 asset.setAcqCost(acqCost);
+                 asset.setMarketValue(marketValue);
                  
+                 portfolio.add(asset);
+                         
                   System.out.println("Successfully imported your order form!");
                  
              }
@@ -97,9 +81,9 @@ public class ImportOrderForm {
      
      }
      
-     public static void updateDatabase(List<Asset> portfolio){
+     public static void updateDatabase(List<Asset> portfolio, Connection connection){
          
-         try(Connection connection = DriverManager.getConnection("URL")){
+         try(connection){
              
              for(Asset asset : portfolio){
                  
@@ -129,36 +113,40 @@ public class ImportOrderForm {
      
      private static boolean assetFound(Connection connection, String assetID) throws SQLException{
         
-         String query = "Checking for asset within portfolio...";
-         PreparedStatement statement = connection.prepareStatement(query);
-         statement.setString(1, assetID);
-         ResultSet resultSet = statement.executeQuery();
-         resultSet.next();
-         int count = resultSet.getInt(1);
-         
-         return count > 0;
-     }
-     
-     private static void updateAssetInDatabase(Connection connection, Asset asset) throws SQLException{
-         
-         String query = "Update Asset setting Acquisition Costs + Holdings ---> Fetching market Value ---> computing new total value";
-         PreparedStatement statement = connection.prepareStatement(query);
-         statement.setDouble(4, asset.getAcqCost());
-         statement.setDouble(6, asset.getHoldings());
-         
-         
-     }
-     
-     private static void insertAssetIntoDatabase(Connection connection, Asset asset) throws SQLException {
+         String query = "SELECT COUNT(*) FROM PORTFOLIO WHERE ID = ?";
+            PreparedStatement statement = connection.prepareStatement(query);
+            
+            statement.setString(1, assetID);
+            ResultSet resultSet = statement.executeQuery();
+            resultSet.next();
+            
+            int count = resultSet.getInt(1);
 
-    String query = "INSERT INTO assets (assetIdentification, assetType, acqDate, acqCost, marketValue)";
+            return count > 0;
+     }
+     
+    private static void updateAssetInDatabase(Connection connection, Asset asset) throws SQLException {
+    String query = "UPDATE PORTFOLIO SET ACQ_DATE = ?, ACQ_COSTS = ?, HOLDINGS = ?, MARKET_VALUE = ?, TOTAL_VALUE = ? WHERE ID = ?";
     PreparedStatement statement = connection.prepareStatement(query);
-    statement.setString(1, asset.getAssetidentification());
+    statement.setString(1, asset.getAcqDate());
+    statement.setDouble(2, asset.getAcqCost());
+    statement.setDouble(3, asset.getHoldings());
+    statement.setDouble(4, asset.getMarketValue());
+    statement.setDouble(5, asset.getTotalValue());
+    statement.setString(6, asset.getAssetidentification());
+    statement.executeUpdate();
+}
+     
+    private static void insertAssetIntoDatabase(Connection connection, Asset asset) throws SQLException {
+    String query = "INSERT INTO PORTFOLIO (ID, TYPE, ACQ_DATE, ACQ_COSTS, HOLDINGS, MARKET_VALUE, TOTAL_VALUE) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    PreparedStatement statement = connection.prepareStatement(query);
+    statement.setString(1, asset.getAssetIdentification());
     statement.setString(2, asset.getAssetType());
     statement.setString(3, asset.getAcqDate());
     statement.setDouble(4, asset.getAcqCost());
-    statement.setDouble(5, asset.getMarketValue());
-    
+    statement.setDouble(5, asset.getHoldings());
+    statement.setDouble(6, asset.getMarketValue());
+    statement.setDouble(7, asset.getTotalValue());
     statement.executeUpdate();
 }
      

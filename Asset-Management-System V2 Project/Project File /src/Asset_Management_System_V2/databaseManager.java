@@ -11,8 +11,6 @@ package Asset_Management_System_V2;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -41,7 +39,7 @@ import java.sql.Statement;
                     
             try {
                    
-                        Thread.sleep(800);
+                        Thread.sleep(500);
                } catch (InterruptedException e) {
                    
                    e.printStackTrace();
@@ -57,6 +55,7 @@ import java.sql.Statement;
      return connection;
        
     }
+    
     public void closeConnection() {
         if (connection != null) {
             try {
@@ -70,31 +69,62 @@ import java.sql.Statement;
         }
     }
 
-    public void createAccountsTable() {
+    public void createPortfolioTable() {
 
         try (Connection conn = DriverManager.getConnection(DATABASE_URL, USERNAME, PASSWORD)) {
+            
+            System.out.println("Initiating create table sequence (Checking table state)");
             try (Statement statement = conn.createStatement()) {
                  String createTableSQL = "CREATE TABLE PORTFOLIO("
                     + "ID VARCHAR(50) PRIMARY KEY, "
                     + "TYPE VARCHAR(50) NOT NULL, "
                     + "ACQ_DATE VARCHAR(50) NOT NULL, "
-                    + "COSTS DOUBLE, "
-                    + "HOLDINGS DOUBLE, "
-                    + "MARKET_VALUE DOUBLE, "
-                    + "TOTAL_VALUE DOUBLE"
+                    + "ACQ_COSTS DECIMAL, "
+                    + "HOLDINGS DECIMAL, "
+                    + "MARKET_VALUE DECIMAL, "
+                    + "TOTAL_VALUE DECIMAL"
                     + ")";
+                 
                 statement.executeUpdate(createTableSQL);
-                System.out.println("Table created successfully.");
+                System.out.println("Portfolio Table created successfully In DB.");
             }
         } catch (SQLException e) {
             if (e.getSQLState().equals("X0Y32")) {
+                
                 // X0Y32 is the SQL state for table already exists exception in Apache Derby
-                System.err.println("Table already exists.");
-                System.out.println("Table in use");
+                System.err.println("Portfolio Table already exists.");
+                System.out.println("Portfolio Table in use");
             } else {
                 e.printStackTrace();
             }
         }
     }
+    
+   public void createTransactionsTable() {
+
+        try (Connection connection = DriverManager.getConnection(DATABASE_URL, USERNAME, PASSWORD)) {
+            
+            System.out.println("Initiating create table sequence (Checking table state)");
+            try (Statement statement = connection.createStatement()) {
+                 String createTableSQL = "CREATE TABLE TRANSACTIONLIST("
+                    + "ID VARCHAR(50) PRIMARY KEY, "
+                    + "BORS VARCHAR(50) NOT NULL, "
+                    + "AMOUNT DOUBLE NOT NULL "
+                    + ")";
+                statement.executeUpdate(createTableSQL);
+                System.out.println("Transaction Table created successfully.");
+            }
+        } catch (SQLException e) {
+            
+            if (e.getSQLState().equals("X0Y32")) {
+                
+                System.err.println("Transaction Table already exists.");
+                System.out.println("Transaction Table in use");
+            } else {
+                e.printStackTrace();
+            }
+        }
+    }
+    
     
 }

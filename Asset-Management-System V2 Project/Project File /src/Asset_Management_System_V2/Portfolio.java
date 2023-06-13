@@ -302,7 +302,7 @@ public class Portfolio {
                    updateStatement.execute();
                    
                    System.out.println("Asset on database updated with purchase");
-                      
+                   p.displayPopUp("Asset on database updated with purchase");
                       
                   }
         
@@ -327,6 +327,7 @@ public class Portfolio {
                         statement.executeUpdate();
 
                         System.out.println("Brand new asset added to the database successfully.");
+                        p.displayPopUp("Brand new asset added to the database successfully.");
        
    }
     
@@ -345,6 +346,7 @@ public class Portfolio {
                     
                    
                     double holdings = resultSet.getDouble("HOLDINGS");
+                    
                     if(dollarSellAmount < holdings){
                     double newHoldings = holdings - dollarSellAmount;
                     String updateQuery = "UPDATE PROTFOLIO SET HOLDINGS = ? WHERE ID = ?";
@@ -356,6 +358,7 @@ public class Portfolio {
                      }else{
                         
                         System.err.println("Invalid input, you only have " + holdings + "to sell");   
+                        p.displayPopUp("Invalid input, you only have " + holdings + "to sell");
                         
                     }
        
@@ -377,10 +380,12 @@ public class Portfolio {
             if (rowsAffected > 0) {
 
                 System.out.println("Asset sold and removed from the database.");
+                p.displayPopUp("Asset sold and removed from the database.");
 
             } else {
 
                    System.out.println("Asset not found in the database.");
+                   p.displayPopUp("Asset not found in the database.");
               }
        
        
@@ -396,12 +401,21 @@ public class Portfolio {
 
         ResultSet resultSet = statement.executeQuery();
         
-        if (resultSet.next()) {
+       if (resultSet.next()) {
+           
             int count = resultSet.getInt(1);
-            return count > 0;
+            
+        if (count > 0) {
+            
+            return true;
+        } else {
+            p.displayPopUp("Asset not found.");
+            return false;
         }
+    }
 
-        return false;
+    return false;
+       
     }  
     
      @Override

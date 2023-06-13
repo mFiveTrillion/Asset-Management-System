@@ -28,10 +28,12 @@ public class Asset {
     private double marketValue; //curent determination of market price of asset (e.g. TSLA stock current market value) 
     private double netReturn;
     private double holdings;
+    private double totalValue; 
   
         
     public Asset(String assetidentification, Connection connection) throws SQLException{
             this.assetIdentification = assetIdentification;
+            this.totalValue = this.holdings * this.marketValue;
             loadFromDatabase(connection);
                    
            
@@ -39,7 +41,7 @@ public class Asset {
     
     private void loadFromDatabase(Connection connection) throws SQLException{
         
-        String query = "SELECT TYPE, ACQ_DATE, ACQ_COSTS, MARKET_VAL, HOLDINGS, TOTAL_ASSET_VALUE FROM PORTFOLIO WHERE ID = ?";
+        String query = "SELECT TYPE, ACQ_DATE, ACQ_COSTS, MARKET_VALUE, HOLDINGS, TOTAL_VALUE FROM PORTFOLIO WHERE ID = ?";
         PreparedStatement statement = connection.prepareStatement(query);
         
         statement.setString(1, assetIdentification);
@@ -47,10 +49,10 @@ public class Asset {
         ResultSet resultSet = statement.executeQuery();
         
         if (resultSet.next()) {
-            assetType = resultSet.getString("TYPE");
-            acqDate = resultSet.getString("ACQ_DATE");
-            acqCost = resultSet.getDouble("ACQ)_COST");
-            marketValue = resultSet.getDouble("MARKET_VAL");
+            this.assetType = resultSet.getString("TYPE");
+            this.acqDate = resultSet.getString("ACQ_DATE");
+            this.acqCost = resultSet.getDouble("ACQ_COSTS");
+            this.marketValue = resultSet.getDouble("MARKET_VALUE");
         } else {
             throw new IllegalArgumentException("Asset with identification " + assetIdentification + " not found in the database.");
         }
@@ -84,6 +86,16 @@ public class Asset {
             public double getHoldings() {
                 return holdings;
             }
+
+        public String getAssetIdentification() {
+            return assetIdentification;
+        }
+
+        public double getTotalValue() {
+            return totalValue;
+        }
+            
+            
 
     public void setAssetIdentification(String assetIdentification) {
         this.assetIdentification = assetIdentification;
