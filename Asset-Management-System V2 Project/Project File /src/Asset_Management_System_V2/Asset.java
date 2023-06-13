@@ -31,7 +31,7 @@ public class Asset {
     private double totalValue; 
   
         
-    public Asset(String assetidentification, Connection connection) throws SQLException{
+    public Asset(String assetIdentification, Connection connection) throws SQLException{
             this.assetIdentification = assetIdentification;
             this.totalValue = this.holdings * this.marketValue;
             loadFromDatabase(connection);

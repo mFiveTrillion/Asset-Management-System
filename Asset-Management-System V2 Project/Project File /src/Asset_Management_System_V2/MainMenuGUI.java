@@ -54,6 +54,7 @@ public class MainMenuGUI {
        //JFrame initializer
        frame = new JFrame("Asset Management System");
        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+       
        frame.setSize(400, 600);
        frame.setLayout(null);
        
@@ -89,6 +90,7 @@ public class MainMenuGUI {
          int choice = JOptionPane.showConfirmDialog(frame, "Import Order form? //***// Form Location: ./resources/importedPortfolio.txt", "Confirmation", JOptionPane.YES_NO_OPTION);
             if (choice == JOptionPane.YES_OPTION) {
                 try {
+                    
                     importer.importPortfolioAndUpdateDatabase(dbMan.getConnection());
                     portfolio.addAssetToPort(dbMan.getConnection());
                  

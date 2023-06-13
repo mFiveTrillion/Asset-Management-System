@@ -13,11 +13,15 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 
     public final class DatabaseManager {
-    private static final String DATABASE_URL = "jdbc:derby:assetman;";
+    private static final String DATABASE_URL = "jdbc:derby:assetman";
     private static final String USERNAME = "pdc";
     private static final String PASSWORD = "pdc";
 
@@ -69,11 +73,11 @@ import java.sql.Statement;
         }
     }
 
-    public void createPortfolioTable() {
+    public void createPortfolioTable() throws SQLException {
 
         try (Connection conn = DriverManager.getConnection(DATABASE_URL, USERNAME, PASSWORD)) {
             
-            System.out.println("Initiating create table sequence (Checking table state)");
+            System.out.println("Initiating create PORTFOLIO table sequence (Checking table state)");
             try (Statement statement = conn.createStatement()) {
                  String createTableSQL = "CREATE TABLE PORTFOLIO("
                     + "ID VARCHAR(50) PRIMARY KEY, "
@@ -86,25 +90,54 @@ import java.sql.Statement;
                     + ")";
                  
                 statement.executeUpdate(createTableSQL);
-                System.out.println("Portfolio Table created successfully In DB.");
+                System.out.println("Portfolio Table created successfully In Database, checking for confirmation");
+                
+                try {
+                    Thread.sleep(300);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
+                boolean exists = checkTableExists(conn, "PORTFOLIO");
+                System.out.println("PORTFOLIO table exists: "+ exists);
+                 if (exists) {
+                System.out.println("PORTFOLIO table added to database.");
+            } else {
+                System.out.println("PORTFOLIO table does not exist in the database.");
+            }
+                 
+                
             }
         } catch (SQLException e) {
+            
             if (e.getSQLState().equals("X0Y32")) {
-                
+                try(Connection conn = DriverManager.getConnection(DATABASE_URL, USERNAME, PASSWORD)){
                 // X0Y32 is the SQL state for table already exists exception in Apache Derby
-                System.err.println("Portfolio Table already exists.");
-                System.out.println("Portfolio Table in use");
+                try {
+                    Thread.sleep(300);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
+                boolean exists = checkTableExists(conn, "PORTFOLIO");
+                System.out.println("PORTFOLIO table exists: "+ exists);
+                 if (exists) {
+                System.err.println("PORTFOLIO table exists in the database.");
+                
+                
             } else {
                 e.printStackTrace();
             }
         }
+      }
     }
+  }
     
-   public void createTransactionsTable() {
+   public void createTransactionsTable() throws SQLException {
 
-        try (Connection connection = DriverManager.getConnection(DATABASE_URL, USERNAME, PASSWORD)) {
+        try (Connection conn2 = DriverManager.getConnection(DATABASE_URL, USERNAME, PASSWORD)) {
             
-            System.out.println("Initiating create table sequence (Checking table state)");
+            System.out.println("Initiating create TRANSACTIONLIST table sequence (Checking table state)");
             try (Statement statement = connection.createStatement()) {
                  String createTableSQL = "CREATE TABLE TRANSACTIONLIST("
                     + "ID VARCHAR(50) PRIMARY KEY, "
@@ -112,19 +145,57 @@ import java.sql.Statement;
                     + "AMOUNT DOUBLE NOT NULL "
                     + ")";
                 statement.executeUpdate(createTableSQL);
-                System.out.println("Transaction Table created successfully.");
+                System.out.println("TRANSACTIONLIST Table created successfully in Database, checking for confirmation");
+                
+                try {
+                    Thread.sleep(300);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
+                boolean exists = checkTableExists(conn2, "TRANSACTIONLIST");
+                System.out.println("TRANSACTIONLIST table exists: "+ exists);
+                 if (exists) {
+                System.out.println("TRANSACTIONLIST table exists in the database.");
+            } else {
+                System.out.println("TRANSACTIONLIST table does not exist in the database.");
+            }
+                
             }
         } catch (SQLException e) {
             
             if (e.getSQLState().equals("X0Y32")) {
                 
-                System.err.println("Transaction Table already exists.");
-                System.out.println("Transaction Table in use");
+                try(Connection conn = DriverManager.getConnection(DATABASE_URL, USERNAME, PASSWORD)){
+                // X0Y32 is the SQL state for table already exists exception in Apache Derby
+                    try {
+                        Thread.sleep(300);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                
+                    boolean exists = checkTableExists(conn, "TRANSACTIONLIST");
+                    System.out.println("TRANSACTIONLIST table exists: "+ exists);
+                     if (exists) {
+                    System.err.println("TRANSACTIONLIST table exists in the database.");
+                   
+            
+            
             } else {
                 e.printStackTrace();
             }
         }
     }
+  }
+   }
+   
+ 
+    public static boolean checkTableExists(Connection connection, String tableName) throws SQLException {
+        
+        DatabaseMetaData metaData = connection.getMetaData();
+        ResultSet resultSet = metaData.getTables(null, null, tableName, null);
+
+        return resultSet.next();
+    }
     
-    
-}
+   }
