@@ -23,13 +23,18 @@ import java.sql.SQLException;
 public class ImportOrderForm {
    
     private List<Asset> portfolio;
-
+    boolean importedPerformed = false; 
+    PopUpMessageWindow p = new PopUpMessageWindow();
     
     public void importPortfolioAndUpdateDatabase( Connection connection)throws SQLException {
         
        try{ List<Asset> portfolio = readPortfolioFromFile("./resources/importedPortfolio.txt", connection);
         updateDatabase(portfolio, connection);
         
+        importedPerformed = true; 
+           System.out.println("File has been already been imported");
+           p.displayPopUp("File has been already been imported");
+           
        }catch(SQLException e){
            
           e.printStackTrace();
@@ -40,7 +45,7 @@ public class ImportOrderForm {
          
       List<Asset> portfolio = new ArrayList<>();    
          
-         try(BufferedReader br = new BufferedReader(new FileReader("./resources/importedPortfolio.txt"))){ //copy and paste order list into given file, for program to read
+         try(BufferedReader br = new BufferedReader(new FileReader(file))){ //copy and paste order list into given file, for program to read
              
              String eachLine; 
              boolean firstLine = true;  
@@ -51,25 +56,34 @@ public class ImportOrderForm {
                   continue;
                  }
                  
-                 String[] fields = eachLine.split(","); //format seperator
+                String[] fields = eachLine.split(",");
+
                  String assetIdentification = fields[0];
                  String assetType = fields[1];
                  String acqDate = fields[2];
                  double acqCost = Double.parseDouble(fields[3]);
-                 double marketValue = Double.parseDouble(fields[4]);
                  
-                 Asset asset = new Asset(assetIdentification, connection);
-                 asset.setAssetIdentification(assetIdentification);
-                 asset.setAssetType(assetType);
-                 asset.setAcqDate(acqDate);
-                 asset.setAcqCost(acqCost);
-                 asset.setMarketValue(marketValue);
+                 double holdings = Double.parseDouble(fields[4]); 
                  
-                 portfolio.add(asset);
-                         
-                  System.out.println("Successfully imported your order form!");
                  
-             }
+                 Asset asset;
+            switch (assetType.toLowerCase()) {
+                case "stock":
+                    asset = new Stock(assetIdentification, assetType, acqDate, acqCost,holdings);
+                    break;
+                case "realestate":
+                    asset = new RealEstate(assetIdentification, assetType, acqDate, acqCost,holdings);
+                    break;
+                case "etf":
+                    asset = new ETF(assetIdentification, assetType, acqDate, acqCost,holdings);
+                    break;
+                default:
+                    asset = new Asset(assetIdentification, assetType, acqDate, acqCost, holdings);
+                    break;
+            }
+
+            portfolio.add(asset);
+           }
              
          }catch(IOException e){
              System.err.println("An error occured reading CSV file: Following are some diagnostics\n Check formatting of CSV order file ensuring variables are seperated by a ',' (Comma)");
@@ -81,11 +95,11 @@ public class ImportOrderForm {
      
      }
      
-     public static void updateDatabase(List<Asset> portfolio, Connection connection){
+     public void updateDatabase(List<Asset> importedPortfolio, Connection connection){
          
          try(connection){
              
-             for(Asset asset : portfolio){
+             for(Asset asset : importedPortfolio){
                  
               String assetID = asset.getAssetidentification();
               
@@ -110,6 +124,7 @@ public class ImportOrderForm {
          
      }
      
+      
      
      private static boolean assetFound(Connection connection, String assetID) throws SQLException{
         
@@ -126,29 +141,34 @@ public class ImportOrderForm {
      }
      
     private static void updateAssetInDatabase(Connection connection, Asset asset) throws SQLException {
-    String query = "UPDATE PORTFOLIO SET ACQ_DATE = ?, ACQ_COSTS = ?, HOLDINGS = ?, MARKET_VALUE = ?, TOTAL_VALUE = ? WHERE ID = ?";
-    PreparedStatement statement = connection.prepareStatement(query);
-    statement.setString(1, asset.getAcqDate());
-    statement.setDouble(2, asset.getAcqCost());
-    statement.setDouble(3, asset.getHoldings());
-    statement.setDouble(4, asset.getMarketValue());
-    statement.setDouble(5, asset.getTotalValue());
-    statement.setString(6, asset.getAssetidentification());
-    statement.executeUpdate();
+        
+            String query = "UPDATE PORTFOLIO SET ACQ_DATE = ?, ACQ_COSTS = ?, HOLDINGS = ?, MARKET_VALUE = ?, TOTAL_VALUE = ? WHERE ID = ?";
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1, asset.getAcqDate());
+            statement.setDouble(2, asset.getAcqCost());
+            statement.setDouble(3, asset.getHoldings());
+            statement.setDouble(4, asset.getMarketValue());
+            statement.setDouble(5, asset.getTotalValue());
+            statement.setString(6, asset.getAssetidentification());
+
+            statement.executeUpdate();
 }
      
     private static void insertAssetIntoDatabase(Connection connection, Asset asset) throws SQLException {
-    String query = "INSERT INTO PORTFOLIO (ID, TYPE, ACQ_DATE, ACQ_COSTS, HOLDINGS, MARKET_VALUE, TOTAL_VALUE) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    PreparedStatement statement = connection.prepareStatement(query);
-    statement.setString(1, asset.getAssetIdentification());
-    statement.setString(2, asset.getAssetType());
-    statement.setString(3, asset.getAcqDate());
-    statement.setDouble(4, asset.getAcqCost());
-    statement.setDouble(5, asset.getHoldings());
-    statement.setDouble(6, asset.getMarketValue());
-    statement.setDouble(7, asset.getTotalValue());
-    statement.executeUpdate();
-}
+        
+            String query = "INSERT INTO PORTFOLIO (ID, TYPE, ACQ_DATE, ACQ_COSTS, HOLDINGS, MARKET_VALUE, TOTAL_VALUE) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1, asset.getAssetIdentification());
+            statement.setString(2, asset.getAssetType());
+            statement.setString(3, asset.getAcqDate());
+            statement.setDouble(4, asset.getAcqCost());
+            statement.setDouble(5, asset.getHoldings());
+            statement.setDouble(6, asset.getMarketValue());
+            statement.setDouble(7, asset.getTotalValue());
+
+            statement.executeUpdate();
+    
+    }
      
      
      

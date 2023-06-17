@@ -4,18 +4,25 @@
  */
 package Asset_Management_System_V2;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Comparator;
-import java.util.Collections;
-
 /**
  *
  * @author hayden
  */
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Comparator;
+import java.util.Collections;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+
+
+
 public class PortfolioMetricsCalc {
     
    private Portfolio portfolio; 
@@ -24,99 +31,66 @@ public class PortfolioMetricsCalc {
         this.portfolio = portfolio;
     }
     
-     public String retrieveWeighting(Portfolio portfolio){ //compute the weightings of each asset class and return a string representation
-
-        int numOfAssets = 0; 
-        double totalStock = 0.0;
-        double totalRealEstate = 0.0;
-        double totalETF = 0.0;
-        double totalOther = 0.0;
-        
-        ArrayList<Asset> stockArray = new ArrayList<>(); 
-        ArrayList<Asset> realEstateArray = new ArrayList<>(); 
-        ArrayList<Asset> other = new ArrayList<>(); 
-        ArrayList<Asset> ETF = new ArrayList<>();
-        
-        String str = " ";
-
-        for (Asset asset : portfolio.getPortfolio()) {
-          
-            switch(asset.getAssetType()){
-                
-                case "Stock":   
-                 
-                stockArray.add(asset);
-                numOfAssets++;
-                break;
-                
-                case "RealEstate":
-                    
-                realEstateArray.add(asset);
-                numOfAssets++;
-                break;
-                
-                case "ETF":
-                    
-                ETF.add(asset);
-                numOfAssets++;
-                break;
-                
-                default:
-                    
-                other.add(asset);
-                numOfAssets++;
-                break;
-                    
-                
-            }
-            
-           
-    }
-        
-        for(Asset asset : stockArray){
-            
-         totalStock += asset.getMarketValue();
-             
-        }
-        //compute the percent value stock comprises of the portfolio 
-        double stockWeight = totalStock / portfolio.getTotalPortValue()   * 100; 
-        
-        for(Asset asset : realEstateArray){
-            
-            totalRealEstate += asset.getMarketValue();
-        }
-        //compute the percent value real Esate comprises of the portfolio
-        double estateWeight = totalRealEstate / portfolio.getTotalPortValue()* 100; 
-        
-        
-        for(Asset asset : ETF){
-            
-            totalETF += asset.getMarketValue();
-        }
-        //compute the percent value ETF comprises of the portfolio
-        double etfWeight = totalETF / portfolio.getTotalPortValue()*100;
-        for(Asset asset : other){
+     public String retrieveWeighting(Connection connection) throws SQLException {
          
-            totalOther += asset.getMarketValue();
-            
-        }
-        //compute the percent value of other assets that comprises of the portfolio
-        double otherWeight = totalOther / portfolio.getTotalPortValue() * 100;
-        
-        stockWeight = Math.round(stockWeight*10.0)/10.0;
-        estateWeight = Math.round(estateWeight*10.0)/10.0;
-        etfWeight = Math.round(etfWeight*10.0)/10.0;
-        otherWeight = Math.round(otherWeight*10.0)/10.0;
-        
-        return "Weighting of Portfolio: " + 
-                "\nStock: " + stockWeight + "%" +
-                "\nReal Esate: " + estateWeight + "%" +
-                "\nETF weight: " + etfWeight + "%" +
-                "\nOther: " + otherWeight + "%"; 
-        }
+            int numOfAssets = 0;
+            double totalStock = 0.0;
+            double totalRealEstate = 0.0;
+            double totalETF = 0.0;
+            double totalOther = 0.0;
+
+            String query = "SELECT * FROM PORTFOLIO";
+            try (Statement statement = connection.createStatement();
+                 ResultSet resultSet = statement.executeQuery(query)) {
+                while (resultSet.next()) {
+                    String assetType = resultSet.getString("TYPE").toLowerCase();
+                    double marketValue = resultSet.getDouble("MARKET_VALUE");
+                    double holdings = resultSet.getDouble("HOLDINGS");
+
+                    switch (assetType) {
+                        case "stock":
+                            totalStock += marketValue * holdings;
+                            break;
+                        case "realestate":
+                            totalRealEstate += marketValue * holdings;
+                            break;
+                        case "etf":
+                            totalETF += marketValue * holdings;
+                            break;
+                        default:
+                            totalOther += marketValue * holdings;
+                            break;
+                    }
+
+                    numOfAssets++;
+                }
+            }
+
+            double totalPortValue = portfolio.getTotalPortValue(connection);
+
+            double stockWeight = (totalStock / totalPortValue) * 100;
+            double estateWeight = (totalRealEstate / totalPortValue) * 100;
+            double etfWeight = (totalETF / totalPortValue) * 100;
+            double otherWeight = (totalOther / totalPortValue) * 100;
+
+            stockWeight = Math.round(stockWeight * 10.0) / 10.0;
+            estateWeight = Math.round(estateWeight * 10.0) / 10.0;
+            etfWeight = Math.round(etfWeight * 10.0) / 10.0;
+            otherWeight = Math.round(otherWeight * 10.0) / 10.0;
+
+            return "Weighting of Portfolio: "
+                    + "\nStock: " + stockWeight + "%"
+                    + "\nReal Estate: " + estateWeight + "%"
+                    + "\nETF weight: " + etfWeight + "%"
+                    + "\nOther: " + otherWeight + "%";
+}
+
      
-     public List<Asset> getPerformanceBasedList(Map<String,Double> netMap, Portfolio portfolio){//compute and return a sorted list based on returns 
+     public List<Asset> getPerformanceBasedList(Map<String,Double> netMap, Portfolio portfolio, Connection connection)throws SQLException{//compute and return a sorted list based on returns 
             
+         //call retrieval method
+         portfolio.addAssetToPortFromDB(connection);
+         
             List<Asset> performanceBasedList = new ArrayList<>();
             
             List<Map.Entry<String, Double>> sortedNetReturns = new ArrayList<>(netMap.entrySet());
@@ -133,7 +107,7 @@ public class PortfolioMetricsCalc {
                  
      });
              for (Map.Entry<String, Double> entry : sortedNetReturns) {
-                for (Asset asset : portfolio.getPortfolio()) {
+                for (Asset asset : portfolio.getPortfolioList()) {
                     if (asset.getAssetidentification().equals(entry.getKey())) {
                         performanceBasedList.add(asset);
                         break;

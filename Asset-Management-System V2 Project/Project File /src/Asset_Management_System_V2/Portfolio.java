@@ -23,6 +23,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class Portfolio {
     
@@ -38,61 +39,70 @@ public class Portfolio {
         
     }
 
-    public List<Asset> getPortfolio() {
+    public List<Asset> getPortfolioList() {
         return portfolio;
     }
     
     
-    public void addAssetsToPort(Asset asset){
+    public void addAssetsToPortList(Asset asset){
      
         portfolio.add(asset);
+        
     }
     
-    public void addAssetToPort(Connection connection) throws SQLException {
+    public void addAssetToPortFromDB(Connection connection) throws SQLException {
         
-        String query = "SELECT ID FROM PORTFOLIO";
+        portfolio.clear();
+        
+        String query = "SELECT ID, TYPE, ACQ_DATE, ACQ_COSTS, MARKET_VALUE, HOLDINGS FROM PORTFOLIO";
         PreparedStatement statement = connection.prepareStatement(query);
 
         ResultSet resultSet = statement.executeQuery();
 
         while (resultSet.next()) {
             String assetIdentification = resultSet.getString("ID");
-            Asset asset = new Asset(assetIdentification, connection);
+            String assetType = resultSet.getString("TYPE");
+            String acqDate = resultSet.getString("ACQ_DATE");
+            double acqCost = resultSet.getDouble("ACQ_COSTS");
+            double marketValue = resultSet.getDouble("MARKET_VALUE");
+            double holdings = resultSet.getDouble("HOLDINGS");
+
+            Asset asset = new Asset(assetIdentification, assetType, acqDate, acqCost, holdings);
             portfolio.add(asset);
         }
-    }
+}
     
     public int numOfAssetsUnderManagement(){ //computes and returns an integer value representing the total number of assets under management
-     
-    int numberOfAssetsUnderManagement = 0;
-
-        for(Asset asset: portfolio){
-
-         numberOfAssetsUnderManagement += 1;    
-
         
-            }
-        
-        return numberOfAssetsUnderManagement;
-        }
-
-    public double getTotalPortValue(){ //computes the total value of portfolio at market value of each asset
-     
-        double portTotal = 0.0;
-        
-        for(Asset asset : portfolio){
-            
-         portTotal += asset.getMarketValue();
-            
-        }
-       
-        
-        return portTotal; 
+     return portfolio.size();
+                   
     }
+
+    public double getTotalPortValue(Connection connection) throws SQLException {
+        
+            double portTotal = 0.0;
+
+            String query = "SELECT * FROM PORTFOLIO";
+            try (Statement statement = connection.createStatement();
+                 ResultSet resultSet = statement.executeQuery(query)) {
+                while (resultSet.next()) {
+                    double positionHoldings = resultSet.getDouble("HOLDINGS");
+                    double marketValue = resultSet.getDouble("MARKET_VALUE");
+                    double assetTotal = positionHoldings * marketValue;
+                    portTotal += assetTotal;
+                }
+            } catch (SQLException e) {
+                
+                e.printStackTrace();
+            }
+
+            return portTotal;
+}
     
-    public double getPortfolioTotalNet(){ //computes the net gain/loss on each asset totalling to give the overall net gain/loss of the portfolio
+    public double getPortfolioTotalNet(Connection connection) throws SQLException{ //computes the net gain/loss on each asset totalling to give the overall net gain/loss of the portfolio
         
         double portfolioNet = 0.0;
+        
         
             for(Asset asset : portfolio){
              
@@ -153,63 +163,67 @@ public class Portfolio {
     
     }
     
-   public void buyAsset(Connection connection)throws SQLException{
-       
-     Scanner scan = new Scanner(System.in);
-     String newAsset;
-     
-     while(true){
-         
-     System.out.println("What asset would you like to buy: ");
-     newAsset = scan.nextLine();
-       
-     if (!newAsset.isEmpty() && newAsset.matches("[a-zA-Z]+")) {
-              break;
-          } else {
-              System.out.println("Invalid asset ID. Please enter a valid string.");
-              p.displayPopUp("Invalid asset ID. Please enter a valid string.");
-          }
-     
-     boolean checkAssetExists = isAssetFound(newAsset, connection);
-  
-     if(checkAssetExists == true){
-      
-          System.out.println("\nAsset found!");
-                    System.out.println("Enter acquisition Cost: (Dollar Amount)");
-                    double acqCostOfNewPurchase = scan.nextDouble();
-                   
-                    
-
-                  
-                    System.out.println("Bought " + "$" + acqCostOfNewPurchase + " more of" + newAsset);
-                    
-                    System.out.println("Updating database...");
-                    
-                    buyMoreOfExistingAsset(newAsset, acqCostOfNewPurchase, connection, checkAssetExists);
-                    
-                       
-     }else if(checkAssetExists == false){
-         
-                 p.displayPopUp("New order created");
-                 System.out.println("Enter the asset type:");
-                 String assetType = scan.nextLine();
-                 System.out.println("Enter the acquisition date (MM/DD/YYYY):");
-                 String acqDate = scan.nextLine();
-                 System.out.println("Enter the acquisition cost:");
-                 double acqCost = scan.nextDouble();
-                 System.out.println("Enter amount (e.g. # of sahres ");
-                 double holdings = scan.nextDouble();
-                 System.out.println("Enter the market value:");
-                 double marketValue = scan.nextDouble();
-         
-                 buyNewAsset(newAsset,assetType,acqDate,acqCost,marketValue,holdings,connection,checkAssetExists);        
-         
-         
-            }
-       }
-   }
+   public void buyAsset(Connection connection, Asset newAsset, Portfolio portfolio)throws SQLException{
    
-   public void sellAsset(Connection connection)throws SQLException{
+     boolean checkAssetExists = isAssetFound(newAsset.getAssetIdentification(), connection, portfolio);
+
+     while(true){
+
+       if (!newAsset.getAssetidentification().isEmpty() && newAsset.getAssetIdentification().matches("[a-zA-Z]+")) {
+           
+           break;
+           
+             } else {
+           
+                 System.out.println("Invalid asset ID. Please enter a valid string.");
+                 p.displayPopUp("Invalid asset ID. Please enter a valid string.");
+             }
+     }
+        if(checkAssetExists){
+
+             System.out.println("\nAsset found! // buyMoreOfExistingAsset executed //");
+
+             System.out.println("(purchase order recieved) Updating " + newAsset.getAssetIdentification() + " in database...");
+             System.out.println("Bought " + "$" + newAsset.getAcqCost() + " more of " + newAsset.getAssetIdentification());
+             p.displayPopUp("Bought " + "$" + newAsset.getAcqCost() + " more of " + newAsset.getAssetIdentification());
+
+
+             buyMoreOfExistingAsset(newAsset.getAssetIdentification(), newAsset.getAcqCost(), newAsset.getHoldings(), connection, checkAssetExists, newAsset.getNetReturn());
+
+
+        }else{
+
+               boolean assetAlreadyExistsInPortfolio = false;
+              for (Asset asset : portfolio.getPortfolioList()) {
+                  if (newAsset.getAssetIdentification().equals(asset.getAssetIdentification())) {
+                      assetAlreadyExistsInPortfolio = true;
+                      break;
+                  }
+              }
+
+                   if (assetAlreadyExistsInPortfolio) {
+                       System.out.println("Asset already exists in the portfolio.");
+                       buyMoreOfExistingAsset(newAsset.getAssetIdentification(), newAsset.getAcqCost(),
+                               newAsset.getHoldings(), connection, checkAssetExists, newAsset.getNetReturn());
+
+                       p.displayPopUp("Asset already exists in the portfolio.");
+
+                   } else {
+
+                       buyNewAsset(newAsset.getAssetIdentification(), newAsset.getAssetType(), newAsset.getAcqDate(),
+                               newAsset.getAcqCost(), newAsset.getMarketValue(), newAsset.getHoldings(),
+                               connection, checkAssetExists, newAsset.getNetReturn());
+
+                       System.out.println("//buyNewAsset executed // Brand new asset added to the database successfully.");
+                       p.displayPopUp("Bought " +newAsset.getAcqCost() + " of " + newAsset.getAssetIdentification());
+                   }
+        }
+        
+        Transaction buyTrans = new Transaction(newAsset.getAssetIdentification(), "BUY", newAsset.getAcqCost());
+        buyTrans.insertTransaction(connection);
+     } 
+   
+   public void sellAsset(Connection connection, Portfolio portfolio)throws SQLException{
        
         Scanner scan = new Scanner(System.in);
        
@@ -229,7 +243,7 @@ public class Portfolio {
         System.out.println("What asset would you like to sell: ");
         assetToSell = scan.nextLine();
      
-     boolean checkAssetExists = isAssetFound(assetToSell, connection);
+     boolean checkAssetExists = isAssetFound(assetToSell, connection, portfolio );
        
        if(checkAssetExists == true){
            
@@ -273,11 +287,12 @@ public class Portfolio {
    }
    
     
-    public void buyMoreOfExistingAsset(String ID, double acq_costs, Connection connection, boolean found)throws SQLException{ //method that is called if asset is found in database
+    public void buyMoreOfExistingAsset(String ID, double acq_costs, double tangibleAmount, Connection connection, boolean found, double netReturn)throws SQLException{ //method that is called if asset is found in database
         
          if(found == true){
                   
-                  String query = "SELECT HOLDINGS FROM PORTFOLIO WHERE ID = ?";
+                 System.out.println("\nAsset found! // buyMoreOfExistingAsset executed //");
+                  String query =  "SELECT HOLDINGS, ACQ_COSTS FROM PORTFOLIO WHERE ID = ?";
                   PreparedStatement statement = connection.prepareStatement(query);
                   
                   statement.setString(1, ID);
@@ -287,33 +302,46 @@ public class Portfolio {
                   if(resultSet.next()){
                       
                     double holdings = resultSet.getDouble("HOLDINGS");
-                    double newHoldings = holdings + acq_costs;
+                    double newHoldings = holdings + tangibleAmount;
+                    
                     double currentAcq_costs = resultSet.getDouble("ACQ_COSTS");
                     double newAcq_costs = currentAcq_costs + acq_costs;
                     
                     
-                    String updateQuery = "UPDATE PORTFOLIO SET HOLDINGS = ? WHERE ID = ?";
-                    PreparedStatement updateStatement = connection.prepareStatement(query);
+                    String updateQuery = "UPDATE PORTFOLIO SET HOLDINGS = ?, ACQ_COSTS = ?, TOTAL_VALUE = ? WHERE ID = ?";
+                    PreparedStatement updateStatement = connection.prepareStatement(updateQuery);
                      
-                   updateStatement.setDouble(6, newHoldings);
-                   updateStatement.setDouble(4, newAcq_costs);
-                   updateStatement.setString(1, ID);
+                   updateStatement.setDouble(1, newHoldings);
+                   updateStatement.setDouble(2, newAcq_costs);
+                   
+                   updateStatement.setDouble(3, netReturn);
+                   updateStatement.setString(4, ID);
                    
                    updateStatement.execute();
                    
                    System.out.println("Asset on database updated with purchase");
-                   p.displayPopUp("Asset on database updated with purchase");
+                   //p.displayPopUp("Asset on database updated with purchase"); unnecessary pop up 
                       
+                   for (Asset asset : portfolio) {
+                        if (ID.equals(asset.getAssetIdentification())) {
+                            System.out.println(ID + " found in List");
+                            double updatedAcq_Costs = asset.getAcqCost() + acq_costs;
+                            asset.setAcqCost(updatedAcq_Costs);
+                            double updatedAmount = asset.getHoldings() + tangibleAmount;
+                        }
+                    }
                   }
         
         
         
          }
+         
+       
     }
          
-   public void buyNewAsset(String ID, String type, String date, double acq_costs, double marketValue, double holdings, Connection connection, boolean foundOrNot)throws SQLException{
+   public void buyNewAsset(String ID, String type, String date, double acq_costs, double marketValue, double holdings, Connection connection, boolean foundOrNot, double netReturn)throws SQLException{
        
-        String insertQuery = "INSERT INTO PORTFOLIO (ID, ASSET_TYPE, ACQ_DATE, ACQ_COST, MARKET_VAL, HOLDINGS) VALUES (?, ?, ?, ?, ?, ?)";
+        String insertQuery = "INSERT INTO PORTFOLIO (ID, TYPE, ACQ_DATE, ACQ_COSTS, MARKET_VALUE, HOLDINGS, TOTAL_VALUE) VALUES (?, ?, ?, ?, ?, ?, ?)";
                   PreparedStatement statement = connection.prepareStatement(insertQuery);
                         statement = connection.prepareStatement(insertQuery);
 
@@ -323,11 +351,13 @@ public class Portfolio {
                         statement.setDouble(4, acq_costs);
                         statement.setDouble(5, marketValue);
                         statement.setDouble(6, holdings);
+                        statement.setDouble(7, netReturn);
 
                         statement.executeUpdate();
 
-                        System.out.println("Brand new asset added to the database successfully.");
-                        p.displayPopUp("Brand new asset added to the database successfully.");
+       Asset asset = new Asset(ID, type, date, acq_costs, holdings);
+       portfolio.add(asset);
+       
        
    }
     
@@ -392,31 +422,32 @@ public class Portfolio {
    }
     
       
-    public boolean isAssetFound(String ID, Connection connection) throws SQLException {
+    public boolean isAssetFound(String ID, Connection connection, Portfolio portfolio) throws SQLException {
         
         String query = "SELECT COUNT(*) FROM PORTFOLIO WHERE ID = ?";
-       
+        
         PreparedStatement statement = connection.prepareStatement(query);
         statement.setString(1, ID);
-
         ResultSet resultSet = statement.executeQuery();
-        
-       if (resultSet.next()) {
-           
-            int count = resultSet.getInt(1);
-            
-        if (count > 0) {
-            
-            return true;
-        } else {
-            p.displayPopUp("Asset not found.");
-            return false;
-        }
-    }
 
-    return false;
-       
-    }  
+        if (resultSet.next()) {
+            int count = resultSet.getInt(1);
+            if (count > 0) {
+                System.out.println(ID + " found in DB");
+                return true;
+            }
+        }
+
+        for (Asset asset : portfolio.getPortfolioList()) {
+            if (ID.equals(asset.getAssetIdentification())) {
+                System.out.println(ID + " found in List");
+                return true;
+            }
+        }
+
+        System.out.println(ID + " not found");
+        return false;
+    }
     
      @Override
     public String toString(){
@@ -433,6 +464,8 @@ public class Portfolio {
         
         
     }
+    
+   
     
 }
   

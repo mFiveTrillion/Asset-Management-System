@@ -22,10 +22,10 @@ public class RealEstate extends Asset{
     
     private String address; 
 
-    public RealEstate(String assetIdentification, Connection connection)throws SQLException{
+    public RealEstate(String assetIdentification, String assetType, String acqDate, double acqCost, double holdings) throws SQLException {
         
-       super(assetIdentification, connection);
-       
+        super(assetIdentification, assetType, acqDate, acqCost, holdings);
+      
     }
     
     

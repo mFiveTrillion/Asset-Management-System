@@ -24,8 +24,10 @@ public class ETF extends Asset {
     private String ticker; 
     private String inceptionDate; 
 
-    public ETF(String assetIdentification,Connection connection)throws SQLException {
-        super(assetIdentification, connection);
+    public ETF(String assetIdentification, String type, String date, double cost, double holdings) throws SQLException {
+        
+        super(assetIdentification, type, date, cost, holdings);
+     
     }
 
     public String getTicker() {

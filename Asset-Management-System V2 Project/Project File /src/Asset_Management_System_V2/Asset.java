@@ -31,13 +31,23 @@ public class Asset {
     private double totalValue; 
   
         
-    public Asset(String assetIdentification, Connection connection) throws SQLException{
+    public Asset(String assetIdentification, String type, String date, double cost, double holdings) {
+        
             this.assetIdentification = assetIdentification;
-            this.totalValue = this.holdings * this.marketValue;
-            loadFromDatabase(connection);
-                   
-           
-        }
+            this.assetType = type;
+            this.acqDate = date;
+            this.acqCost = cost;
+            this.holdings = holdings;
+            this.marketValue = cost / holdings; // Calculate the market value correctly
+
+            // Calculate the net return
+            // Generate a random number within the range of 10% plus or minus of the market value to give a current market price 
+            double randomRange = 0.1 * marketValue; // 10% of the market value
+            double randomOffset = (Math.random() * 2 - 1) * randomRange; // Random value within the range [-randomRange, randomRange]
+            
+            this.netReturn = marketValue * holdings - randomOffset * holdings; //purchased market value * holdings to give position, minus random current price to give net return
+}
+
     
     private void loadFromDatabase(Connection connection) throws SQLException{
         
@@ -76,11 +86,15 @@ public class Asset {
             }
 
             public double getMarketValue() {
+              
                 return marketValue;
             }
 
             public double getNetReturn() {
+                
                 return netReturn;
+                   
+                
             }
 
             public double getHoldings() {

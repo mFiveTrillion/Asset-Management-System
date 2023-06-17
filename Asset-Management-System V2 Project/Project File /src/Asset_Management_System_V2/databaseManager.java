@@ -43,7 +43,7 @@ import java.util.logging.Logger;
                     
             try {
                    
-                        Thread.sleep(500);
+                        Thread.sleep(300);
                } catch (InterruptedException e) {
                    
                    e.printStackTrace();
@@ -83,17 +83,17 @@ import java.util.logging.Logger;
                     + "ID VARCHAR(50) PRIMARY KEY, "
                     + "TYPE VARCHAR(50) NOT NULL, "
                     + "ACQ_DATE VARCHAR(50) NOT NULL, "
-                    + "ACQ_COSTS DECIMAL, "
-                    + "HOLDINGS DECIMAL, "
-                    + "MARKET_VALUE DECIMAL, "
-                    + "TOTAL_VALUE DECIMAL"
+                    + "ACQ_COSTS DOUBLE, "
+                    + "HOLDINGS DOUBLE, "
+                    + "MARKET_VALUE DOUBLE, "
+                    + "TOTAL_VALUE DOUBLE"
                     + ")";
                  
                 statement.executeUpdate(createTableSQL);
                 System.out.println("Portfolio Table created successfully In Database, checking for confirmation");
                 
                 try {
-                    Thread.sleep(300);
+                    Thread.sleep(100);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -114,7 +114,7 @@ import java.util.logging.Logger;
                 try(Connection conn = DriverManager.getConnection(DATABASE_URL, USERNAME, PASSWORD)){
                 // X0Y32 is the SQL state for table already exists exception in Apache Derby
                 try {
-                    Thread.sleep(300);
+                    Thread.sleep(100);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -133,6 +133,7 @@ import java.util.logging.Logger;
     }
   }
     
+    
    public void createTransactionsTable() throws SQLException {
 
         try (Connection conn2 = DriverManager.getConnection(DATABASE_URL, USERNAME, PASSWORD)) {
@@ -142,13 +143,13 @@ import java.util.logging.Logger;
                  String createTableSQL = "CREATE TABLE TRANSACTIONLIST("
                     + "ID VARCHAR(50) PRIMARY KEY, "
                     + "BORS VARCHAR(50) NOT NULL, "
-                    + "AMOUNT DOUBLE NOT NULL "
+                    + "AMOUNT DOUBLE"
                     + ")";
                 statement.executeUpdate(createTableSQL);
                 System.out.println("TRANSACTIONLIST Table created successfully in Database, checking for confirmation");
                 
                 try {
-                    Thread.sleep(300);
+                    Thread.sleep(100);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -169,7 +170,7 @@ import java.util.logging.Logger;
                 try(Connection conn = DriverManager.getConnection(DATABASE_URL, USERNAME, PASSWORD)){
                 // X0Y32 is the SQL state for table already exists exception in Apache Derby
                     try {
-                        Thread.sleep(300);
+                        Thread.sleep(100);
                     } catch (InterruptedException ex) {
                         Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -190,12 +191,46 @@ import java.util.logging.Logger;
    }
    
  
+   public void removePortTable() {
+       
+        try (Connection conn = getConnection();
+             Statement statement = conn.createStatement()) {
+
+            String dropTableSQL = "DROP TABLE PORTFOLIO";
+            statement.executeUpdate(dropTableSQL);
+            System.out.println("PORTFOLIO table deleted successfully from the database.");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+   }
+       
+     public void removeTransTable() {
+       
+    try (Connection conn = getConnection();
+         Statement statement = conn.createStatement()) {
+        
+        String dropTableSQL = "DROP TABLE TRANSACTIONLIST";
+        statement.executeUpdate(dropTableSQL);
+        System.out.println("TRANSACTIONLIST table deleted successfully from the database.");
+        
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+}
+   
+   
+   
     public static boolean checkTableExists(Connection connection, String tableName) throws SQLException {
         
         DatabaseMetaData metaData = connection.getMetaData();
         ResultSet resultSet = metaData.getTables(null, null, tableName, null);
 
         return resultSet.next();
-    }
+        }
     
    }
+
+
+

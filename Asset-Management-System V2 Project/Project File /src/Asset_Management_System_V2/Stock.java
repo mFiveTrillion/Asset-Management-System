@@ -24,11 +24,10 @@ public class Stock extends Asset{
     private double shares; 
     private String ticker;
     
-    public Stock(String assetIdentification, Connection connection)throws SQLException{
-       
-      super(assetIdentification, connection);  
-     
+    public Stock(String assetIdentification, String assetType, String acqDate, double acqCost, double holdings) throws SQLException {
         
+        super(assetIdentification, assetType, acqDate, acqCost, holdings);
+       
     }
 
     public double getShares() {
