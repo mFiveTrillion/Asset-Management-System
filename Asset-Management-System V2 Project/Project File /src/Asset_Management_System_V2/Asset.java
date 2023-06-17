@@ -8,13 +8,7 @@ package Asset_Management_System_V2;
  *
  * @author hayden
  */
-import java.io.IOException;
-import java.util.List;
-import java.util.ArrayList;
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -42,7 +36,7 @@ public class Asset {
 
             // Calculate the net return
             // Generate a random number within the range of 10% plus or minus of the market value to give a current market price 
-            double randomRange = 0.1 * marketValue; // 10% of the market value
+            double randomRange = 0.05 * marketValue; // 10% of the market value
             double randomOffset = (Math.random() * 2 - 1) * randomRange; // Random value within the range [-randomRange, randomRange]
             
             this.netReturn = marketValue * holdings - randomOffset * holdings; //purchased market value * holdings to give position, minus random current price to give net return

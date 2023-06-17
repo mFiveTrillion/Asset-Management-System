@@ -8,18 +8,13 @@ package Asset_Management_System_V2;
  *
  * @author hayden
  */
-import java.util.ArrayList;
-import java.util.List;
+
 import java.util.Map;
 import java.util.HashMap;
 import java.util.*;
-import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -103,6 +98,7 @@ public class Portfolio {
         
         double portfolioNet = 0.0;
         
+        addAssetToPortFromDB(connection);
         
             for(Asset asset : portfolio){
              
@@ -361,65 +357,89 @@ public class Portfolio {
        
    }
     
-   public void sellPartOfAsset(String ID, double dollarSellAmount, Connection connection, boolean found)throws SQLException{
+   public void sellPartOfAsset(String ID, double dollarSellAmount, Connection connection, boolean found) throws SQLException {
        
-       if(found == true){
-                  
-                  String query = "SELECT HOLDINGS FROM PORTFOLIO WHERE ID = ?";
-                  PreparedStatement statement = connection.prepareStatement(query);
-                  
-                  statement.setString(1, ID);
-                  
-                  ResultSet resultSet = statement.executeQuery();
-                  
-                  if(resultSet.next()){
-                    
-                   
-                    double holdings = resultSet.getDouble("HOLDINGS");
-                    
-                    if(dollarSellAmount < holdings){
-                    double newHoldings = holdings - dollarSellAmount;
-                    String updateQuery = "UPDATE PROTFOLIO SET HOLDINGS = ? WHERE ID = ?";
-                   
-                    PreparedStatement updateStatement = connection.prepareStatement(updateQuery);
+            if (found) {
+                String query = "SELECT ACQ_COSTS FROM PORTFOLIO WHERE ID = ?";
+                PreparedStatement statement = connection.prepareStatement(query);
 
-                    updateStatement.setString(1, ID);
-                    updateStatement.setDouble(6, newHoldings);
-                     }else{
+                statement.setString(1, ID);
+
+                ResultSet resultSet = statement.executeQuery();
+
+                if (resultSet.next()) {
+                    double holdings = resultSet.getDouble("ACQ_COSTS");
+
+                    if (dollarSellAmount < holdings) {
                         
-                        System.err.println("Invalid input, you only have " + holdings + "to sell");   
-                        p.displayPopUp("Invalid input, you only have " + holdings + "to sell");
+                        System.out.println("Executing sellPartOfAsset");
+                        double newHoldings = holdings - dollarSellAmount;
+
+                        String updateQuery = "UPDATE PORTFOLIO SET ACQ_COSTS = ? WHERE ID = ?";
+                        PreparedStatement updateStatement = connection.prepareStatement(updateQuery);
+
+                        updateStatement.setDouble(1, newHoldings); // Use setDouble() instead of setString()
+                        updateStatement.setString(2, ID);
+
+                        updateStatement.executeUpdate();
+                        updateStatement.close();
                         
+                        p.displayPopUp("Successfully sold, new holdings of " + ID + ": " + newHoldings );
+                        
+                    } else {
+                        System.err.println("Invalid input, you only have " + holdings + " to sell");
+                        p.displayPopUp("Invalid input, you only have " + holdings + " to sell");
                     }
-       
-       
-       
-            }
-       }
-   }
+                }
+
+                resultSet.close();
+                statement.close();
+                
+                Transaction sell = new Transaction(ID, "SELL", dollarSellAmount);
+                sell.insertTransaction(connection);
+    }
+}
+
    
-   public void sellAll(String ID, Connection connection)throws SQLException{
+   public void sellAll(String ID, Connection connection) throws SQLException {
        
-        String deleteQuery = "DELETE FROM PORTFOLIO WHERE ID = ?";
-        PreparedStatement statement = connection.prepareStatement(deleteQuery);
+        String selectQuery = "SELECT HOLDINGS FROM PORTFOLIO WHERE ID = ?";
+        double holdings = 0.0;
+        try (PreparedStatement selectStatement = connection.prepareStatement(selectQuery)) {
+            selectStatement.setString(1, ID);
+            
+            ResultSet resultSet = selectStatement.executeQuery();
+            
+            if (resultSet.next()) {
+               holdings = resultSet.getDouble("HOLDINGS");
+                
+                String deleteQuery = "DELETE FROM PORTFOLIO WHERE ID = ?";
+                PreparedStatement deleteStatement = connection.prepareStatement(deleteQuery);
+                
+                deleteStatement.setString(1, ID);
+                
+                int rowsAffected = deleteStatement.executeUpdate();
+                
+                if (rowsAffected > 0) {
+                    System.out.println("Asset sold and removed from the database.");
+                    p.displayPopUp("Asset sold and removed from the database.");
+                } else {
+                    System.out.println("Asset not found in the database.");
+                    p.displayPopUp("Asset not found in the database.");
+                }
+                
+                deleteStatement.close();
+                
+              
+            }
+            
+             
+            resultSet.close();
+        }
+         Transaction sell = new Transaction(ID, "SELL", holdings);
+                sell.insertTransaction(connection);
+    }
 
-        statement.setString(1, ID);
-
-        int rowsAffected = statement.executeUpdate();
-
-            if (rowsAffected > 0) {
-
-                System.out.println("Asset sold and removed from the database.");
-                p.displayPopUp("Asset sold and removed from the database.");
-
-            } else {
-
-                   System.out.println("Asset not found in the database.");
-                   p.displayPopUp("Asset not found in the database.");
-              }
-       
-       
-   }
     
       
     public boolean isAssetFound(String ID, Connection connection, Portfolio portfolio) throws SQLException {

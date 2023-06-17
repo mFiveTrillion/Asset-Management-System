@@ -10,7 +10,6 @@ package Asset_Management_System_V2;
  */
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Comparator;
@@ -78,8 +77,8 @@ public class PortfolioMetricsCalc {
             etfWeight = Math.round(etfWeight * 10.0) / 10.0;
             otherWeight = Math.round(otherWeight * 10.0) / 10.0;
 
-            return "Weighting of Portfolio: "
-                    + "\nStock: " + stockWeight + "%"
+            return 
+                     "\nStock: " + stockWeight + "%"
                     + "\nReal Estate: " + estateWeight + "%"
                     + "\nETF weight: " + etfWeight + "%"
                     + "\nOther: " + otherWeight + "%";

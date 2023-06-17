@@ -21,9 +21,9 @@ public class App_Asset_Management_System_App {
         DatabaseManager db = new DatabaseManager();
         db.getConnection();
         
-        //read this code when changes are made to portfolio table SQL code 
-       // db.removePortTable();
-        //db.removeTransTable();
+        //uncomment this code when changes are made to portfolio table SQL code, or to restart table status
+       //db.removePortTable();
+       //db.removeTransTable();
         
             try {
                 Thread.sleep(200);

@@ -11,20 +11,13 @@ package Asset_Management_System_V2;
 import javax.swing.*;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.awt.*;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
 import java.sql.*;
 import javax.swing.Timer;
 import java.text.DecimalFormat;
@@ -33,7 +26,6 @@ public class MainMenuGUI {
 
     public JFrame frame;
     private JButton importButton;
-    private JFrame importMessage;
     private JLabel label;
 
     private JButton buyButton;
@@ -55,6 +47,7 @@ public class MainMenuGUI {
     
     public DatabaseManager dbMan = new DatabaseManager();
     Connection con = dbMan.getConnection();
+    private PopUpMessageWindow p = new PopUpMessageWindow();
     
     public MainMenuGUI() throws SQLException {
 
@@ -135,6 +128,36 @@ public class MainMenuGUI {
         frame.add(buyButton);
 
     }
+    
+    private void showSellForm() throws SQLException{
+        
+        
+        // Prompt for asset ID
+     String assetID = JOptionPane.showInputDialog("Enter asset ID:");
+
+     // Check if asset exists in the database
+     if (portfolio.isAssetFound(assetID, con, portfolio)) {
+         // Ask whether to sell all
+         int sellAll = JOptionPane.showConfirmDialog(null, "Sell all units?", "Sell Asset", JOptionPane.YES_NO_OPTION);
+
+         if (sellAll == JOptionPane.YES_OPTION) {
+             // Remove the asset from the database
+             portfolio.sellAll(assetID, con);
+             JOptionPane.showMessageDialog(null, "Asset sold successfully!");
+             System.out.println("Asset completely sold succesfully");
+         } else {
+             // Ask for dollar amount to sell
+             double sellAmount = Double.parseDouble(JOptionPane.showInputDialog("Enter dollar amount to sell:"));
+
+             // Subtract sell amount from the asset's quantity in the database
+            portfolio.sellPartOfAsset(assetID, sellAmount, con, true);
+             
+         }
+        
+     }else{
+        p.displayPopUp("Asset not found");
+     }
+    }
 
     private void showBuyForm() {
 
@@ -146,9 +169,9 @@ public class MainMenuGUI {
         JTextField idField = new JTextField();
         JLabel typeLabel = new JLabel(" Asset Type:");
         JTextField typeField = new JTextField();
-        JLabel dateLabel = new JLabel(" Acquisition Date:");
+        JLabel dateLabel = new JLabel(" Acq. Date dd/mm/yyyy:");
         JTextField dateField = new JTextField();
-        JLabel costLabel = new JLabel(" Acquisition Cost:");
+        JLabel costLabel = new JLabel(" Acq. Cost:");
         JTextField costField = new JTextField();
         JLabel sharesLabel = new JLabel(" Number of Shares:");
         JTextField sharesField = new JTextField();
@@ -215,25 +238,20 @@ public class MainMenuGUI {
     private void sellAssetButton() {
 
         //button to sell an asset
-        sellButton = new JButton("Sell asset");
-        sellButton.setBounds(100, 150, 200, 30);
+         sellButton = new JButton("Sell asset");
+        sellButton.setBounds(100, 130, 200, 30);
         sellButton.addActionListener(e -> {
 
-            try {
-                portfolio.sellAsset(con, portfolio);
-            } catch (SQLException ex) {
-                Logger.getLogger(MainMenuGUI.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            try {
-                portfolio.addAssetToPortFromDB(con);
-            } catch (SQLException ex) {
-                Logger.getLogger(MainMenuGUI.class.getName()).log(Level.SEVERE, null, ex);
-            }
+             try {
+                 showSellForm();
+             } catch (SQLException ex) {
+                 Logger.getLogger(MainMenuGUI.class.getName()).log(Level.SEVERE, null, ex);
+             }
 
         });
 
         frame.add(sellButton);
+
 
     }
 
@@ -350,15 +368,20 @@ public class MainMenuGUI {
 
     private void updateMetrics() throws SQLException {
         
+         DecimalFormat decimalFormat = new DecimalFormat("#.00");
+        
             double totalPortValue = portfolio.getTotalPortValue(con);
-            double portfolioNetReturn = portfolio.getPortfolioTotalNet(con);
+            double portfolioNetReturn = portfolio.getPortfolioTotalNet(con) - portfolio.getTotalPortValue(con);
             String assetWeighting = metrics.retrieveWeighting(con);
 
-            totalValueLabel.setText("Total Value: $" + totalPortValue);
-            netReturnLabel.setText("Net portfolio return: $" + portfolioNetReturn);
+           String formattedTotalPortValue = decimalFormat.format(totalPortValue);
+           String formattedPortfolioNetReturn = decimalFormat.format(portfolioNetReturn);
+            
+            totalValueLabel.setText("Portfolio position: $" + formattedTotalPortValue);
+            netReturnLabel.setText("Portfolio Net P/L: $" + formattedPortfolioNetReturn);
             portAssetWeightingLabel.setText("Asset class weight: " + assetWeighting);
 
-            // Refresh the metrics panel
+            // Refresh the metrics panel so it stays live 
             metricsPanel.revalidate();
             metricsPanel.repaint();
         }
@@ -369,8 +392,8 @@ public class MainMenuGUI {
         metricsPanel.setLayout(new GridLayout(4, 1));
         
         title = new JLabel("LIVE PORTFOLIO SUMMARY");
-        totalValueLabel = new JLabel("Total Value: ");
-        netReturnLabel = new JLabel("Net portfolio Return: ");
+        totalValueLabel = new JLabel("Portfolio position: ");
+        netReturnLabel = new JLabel("Portfolio Net P/L: $");
         portAssetWeightingLabel = new JLabel("Asset class weight: ");
 
         metricsPanel.add(title);

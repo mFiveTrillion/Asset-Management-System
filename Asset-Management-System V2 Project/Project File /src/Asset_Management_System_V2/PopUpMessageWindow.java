@@ -9,7 +9,7 @@ package Asset_Management_System_V2;
  * @author hayden
  */
 
-import javax.swing.JFrame;
+
 import javax.swing.JOptionPane;
 
 public class PopUpMessageWindow {
