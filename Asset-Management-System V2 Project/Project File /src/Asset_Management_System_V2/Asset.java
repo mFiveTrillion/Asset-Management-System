@@ -43,7 +43,7 @@ public class Asset {
 }
 
     
-    private void loadFromDatabase(Connection connection) throws SQLException{
+    private void loadFromDatabase(Connection connection) throws SQLException{ //method to retrieve a specific asset from DB.
         
         String query = "SELECT TYPE, ACQ_DATE, ACQ_COSTS, MARKET_VALUE, HOLDINGS, TOTAL_VALUE FROM PORTFOLIO WHERE ID = ?";
         PreparedStatement statement = connection.prepareStatement(query);

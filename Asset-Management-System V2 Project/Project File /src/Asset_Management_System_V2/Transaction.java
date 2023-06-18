@@ -45,7 +45,7 @@ public class Transaction {
         return amount;
     }
 
-    public List<Transaction> getTransactionsFromDB()throws SQLException{
+    public List<Transaction> getTransactionsFromDB()throws SQLException{ //retrieves transaction data from transactionList table in DB
    
         List<Transaction> transactionList = new ArrayList<>();
 
@@ -71,7 +71,7 @@ public class Transaction {
     return transactionList;
 }
     
-   public synchronized void insertTransaction(Connection conn) {
+   public synchronized void insertTransaction(Connection conn) { //inserts a singular transaction into DB transactionList table
         
     try {
             String insertSQL = "INSERT INTO TRANSACTIONLIST (ID, BORS, AMOUNT) VALUES (?, ?, ?)";

@@ -378,7 +378,7 @@ public class Portfolio {
                         String updateQuery = "UPDATE PORTFOLIO SET ACQ_COSTS = ? WHERE ID = ?";
                         PreparedStatement updateStatement = connection.prepareStatement(updateQuery);
 
-                        updateStatement.setDouble(1, newHoldings); // Use setDouble() instead of setString()
+                        updateStatement.setDouble(1, newHoldings); // Use setDouble()
                         updateStatement.setString(2, ID);
 
                         updateStatement.executeUpdate();

@@ -50,11 +50,14 @@ public class PortfolioMetricsCalc {
                         case "stock":
                             totalStock += marketValue * holdings;
                             break;
-                        case "realestate":
+                        case "real estate":
                             totalRealEstate += marketValue * holdings;
                             break;
                         case "etf":
                             totalETF += marketValue * holdings;
+                            break;
+                        case "realestate":
+                            totalRealEstate += marketValue * holdings;
                             break;
                         default:
                             totalOther += marketValue * holdings;

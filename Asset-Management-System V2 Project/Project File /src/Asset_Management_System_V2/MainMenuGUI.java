@@ -85,6 +85,7 @@ public class MainMenuGUI {
 
         //metrics panel on JFrame 
         metricsPanel();
+        metricsTimer();
     }
 
     private void importButton() throws SQLException {
@@ -130,26 +131,25 @@ public class MainMenuGUI {
     }
     
     private void showSellForm() throws SQLException{
-        
-        
-        // Prompt for asset ID
+        //sell form that is shown when sell button is pressed
+       
      String assetID = JOptionPane.showInputDialog("Enter asset ID:");
 
-     // Check if asset exists in the database
+   
      if (portfolio.isAssetFound(assetID, con, portfolio)) {
-         // Ask whether to sell all
+        
          int sellAll = JOptionPane.showConfirmDialog(null, "Sell all units?", "Sell Asset", JOptionPane.YES_NO_OPTION);
 
          if (sellAll == JOptionPane.YES_OPTION) {
-             // Remove the asset from the database
+         
              portfolio.sellAll(assetID, con);
              JOptionPane.showMessageDialog(null, "Asset sold successfully!");
              System.out.println("Asset completely sold succesfully");
          } else {
-             // Ask for dollar amount to sell
+            
              double sellAmount = Double.parseDouble(JOptionPane.showInputDialog("Enter dollar amount to sell:"));
 
-             // Subtract sell amount from the asset's quantity in the database
+        
             portfolio.sellPartOfAsset(assetID, sellAmount, con, true);
              
          }
@@ -160,7 +160,7 @@ public class MainMenuGUI {
     }
 
     private void showBuyForm() {
-
+        //buy form shown when buy button is pressed
         JFrame buyFormFrame = new JFrame("Buy Asset Form");
         buyFormFrame.setSize(400, 300);
         buyFormFrame.setLayout(new GridLayout(7, 2));
@@ -353,7 +353,7 @@ public class MainMenuGUI {
 
     }
 
-    private void metricsTimer() {
+    private void metricsTimer() { //timer to keep the updating methods 
         
             int refreshInterval = 1000; // milliseconds
             Timer timer = new Timer(refreshInterval, e -> {
@@ -379,34 +379,43 @@ public class MainMenuGUI {
             
             totalValueLabel.setText("Portfolio position: $" + formattedTotalPortValue);
             netReturnLabel.setText("Portfolio Net P/L: $" + formattedPortfolioNetReturn);
-            portAssetWeightingLabel.setText("Asset class weight: " + assetWeighting);
+            portAssetWeightingLabel.setText("ASSET CLASS WEIGHTINGS: " + assetWeighting);
 
             // Refresh the metrics panel so it stays live 
             metricsPanel.revalidate();
             metricsPanel.repaint();
         }
-
-    private void metricsPanel() {
+    
+    private void metricsPanel() throws SQLException {
         
-        metricsPanel = new JPanel();
-        metricsPanel.setLayout(new GridLayout(4, 1));
-        
-        title = new JLabel("LIVE PORTFOLIO SUMMARY");
-        totalValueLabel = new JLabel("Portfolio position: ");
-        netReturnLabel = new JLabel("Portfolio Net P/L: $");
-        portAssetWeightingLabel = new JLabel("Asset class weight: ");
+            metricsPanel = new JPanel();
+            metricsPanel.setLayout(new BoxLayout(metricsPanel, BoxLayout.Y_AXIS));
 
-        metricsPanel.add(title);
-        metricsPanel.add(totalValueLabel);
-        metricsPanel.add(netReturnLabel);
-        metricsPanel.add(portAssetWeightingLabel);
-  
+            title = new JLabel("LIVE PORTFOLIO SUMMARY");
+            totalValueLabel = new JLabel("Portfolio position: ");
+            netReturnLabel = new JLabel("Portfolio Net P/L: $");
+            portAssetWeightingLabel = new JLabel("ASSET CLASS WEIGHTINGS: ");
 
-        metricsPanel.setBounds(100, 350, 1000, 100);
-        frame.add(metricsPanel);
+            metricsPanel.add(title);
+            metricsPanel.add(totalValueLabel);
+            metricsPanel.add(netReturnLabel);
+            metricsPanel.add(Box.createVerticalStrut(10)); // Add some vertical spacing
+            metricsPanel.add(new JLabel("Asset Class Weightings:"));
 
-        metricsTimer(); // Start the timer for updating the metrics
-}
+            // Retrieve and split the asset weightings string
+            String assetWeighting = metrics.retrieveWeighting(con);
+            String[] weightings = assetWeighting.split("\n");
+            for (String weighting : weightings) {
+                JLabel label = new JLabel(weighting);
+                metricsPanel.add(label);
+            }
+
+            metricsPanel.setBounds(100, 350, 1000, 200);
+            frame.add(metricsPanel);
+
+            metricsTimer(); // Start the timer for updating the metrics
+        }
+
 
     private void transactionButton() {
 

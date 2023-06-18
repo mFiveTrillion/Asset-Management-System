@@ -14,14 +14,13 @@ import java.util.logging.Logger;
  */
 public class App_Asset_Management_System_App {
 
-    /**
-     * 
-     */
+   
     public static void main(String[] args) throws SQLException {
         DatabaseManager db = new DatabaseManager();
         db.getConnection();
         
-        //uncomment this code when changes are made to portfolio table SQL code, or to restart table status
+       //uncomment to restart 
+       
        //db.removePortTable();
        //db.removeTransTable();
         
@@ -40,6 +39,7 @@ public class App_Asset_Management_System_App {
         MainMenuGUI gui = new MainMenuGUI();
         gui.frame.setVisible(true);
       
+        
     }
     
 }

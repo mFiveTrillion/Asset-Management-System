@@ -33,7 +33,7 @@ import java.util.logging.Logger;
         
     }
     
-    public Connection getConnection()throws SQLException{
+    public Connection getConnection()throws SQLException{ //get connection to DB 
         
        try {
          
@@ -60,7 +60,7 @@ import java.util.logging.Logger;
        
     }
     
-    public void closeConnection() {
+    public void closeConnection() { //close connection 
         if (connection != null) {
             try {
                 
@@ -73,7 +73,7 @@ import java.util.logging.Logger;
         }
     }
 
-    public void createPortfolioTable() throws SQLException {
+    public void createPortfolioTable() throws SQLException { // create PORTFOLIO table in assetman DB, stores assets with relevant information 
 
         try (Connection conn = DriverManager.getConnection(DATABASE_URL, USERNAME, PASSWORD)) {
             
@@ -134,7 +134,7 @@ import java.util.logging.Logger;
   }
     
     
-   public void createTransactionsTable() throws SQLException {
+   public void createTransactionsTable() throws SQLException { //create TRANSACTION table in assetman DB 
 
         try (Connection conn2 = DriverManager.getConnection(DATABASE_URL, USERNAME, PASSWORD)) {
             
@@ -191,7 +191,7 @@ import java.util.logging.Logger;
    }
    
  
-   public void removePortTable() {
+   public void removePortTable() { //remove portfolio table method, called to restart and depopulate tables
        
         try (Connection conn = getConnection();
              Statement statement = conn.createStatement()) {
@@ -206,7 +206,7 @@ import java.util.logging.Logger;
         
    }
        
-     public void removeTransTable() {
+     public void removeTransTable() { //remove transactionlist table method, called to restart and depopulate tables
        
     try (Connection conn = getConnection();
          Statement statement = conn.createStatement()) {
@@ -222,7 +222,7 @@ import java.util.logging.Logger;
    
    
    
-    public static boolean checkTableExists(Connection connection, String tableName) throws SQLException {
+    public static boolean checkTableExists(Connection connection, String tableName) throws SQLException { //method to check if table exists in DB
         
         DatabaseMetaData metaData = connection.getMetaData();
         ResultSet resultSet = metaData.getTables(null, null, tableName, null);

@@ -25,7 +25,7 @@ public class ImportOrderForm {
     boolean importedPerformed = false; 
     PopUpMessageWindow p = new PopUpMessageWindow();
     
-    public void importPortfolioAndUpdateDatabase( Connection connection)throws SQLException {
+    public void importPortfolioAndUpdateDatabase( Connection connection)throws SQLException { //method calls to import the data from file and popualates the portfolio DB
         
        try{ List<Asset> portfolio = readPortfolioFromFile("./resources/importedPortfolio.txt", connection);
         updateDatabase(portfolio, connection);
@@ -94,7 +94,7 @@ public class ImportOrderForm {
      
      }
      
-     public void updateDatabase(List<Asset> importedPortfolio, Connection connection){
+     public void updateDatabase(List<Asset> importedPortfolio, Connection connection){ //update DB method, checks if asset already exists in DB
          
          try(connection){
              
